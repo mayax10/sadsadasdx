@@ -38,6 +38,10 @@ function RGBAtoHEX(redArg, greenArg, blueArg, alphaArg)
     return string.format('%.2x%.2x%.2x%.2x', redArg, greenArg, blueArg, alphaArg)
 end
 
+function RGBtoHEX(redArg, greenArg, blueArg)
+    return string.format('%.2x%.2x%.2x', redArg, greenArg, blueArg)
+end
+
 local hitgroup_names = {'generic', 'head', 'chest', 'stomach', 'left arm', 'right arm', 'left leg', 'right leg', 'neck', '?', 'gear'}
 function fired(e)
     stored_shot = {
@@ -153,6 +157,63 @@ angle3d_struct,
 vec_struct
 )
 
+local printc do
+    ffi.cdef[[
+        typedef struct { uint8_t r; uint8_t g; uint8_t b; uint8_t a; } color_struct_t;
+    ]]
+
+	local print_interface = ffi.cast("void***", client.create_interface("vstdlib.dll", "VEngineCvar007"))
+	local color_print_fn = ffi.cast("void(__cdecl*)(void*, const color_struct_t&, const char*, ...)", print_interface[0][25])
+
+    -- 
+    local hex_to_rgb = function (hex)
+        return tonumber(hex:sub(1, 2), 16), tonumber(hex:sub(3, 4), 16), tonumber(hex:sub(5, 6), 16), tonumber(hex:sub(7, 8), 16)
+    end
+	
+	local raw = function(text, r, g, b, a)
+		local col = ffi.new("color_struct_t")
+		col.r, col.g, col.b, col.a = r or 217, g or 217, b or 217, a or 255
+	
+		color_print_fn(print_interface, col, tostring(text))
+	end
+
+	printc = function (...)
+		for i, v in ipairs{...} do
+			local r = "\aD9D9D9"..v
+			for col, text in r:gmatch("\a(%x%x%x%x%x%x)([^\a]*)") do
+				raw(text, hex_to_rgb(col))
+			end
+		end
+		raw "\n"
+	end
+end
+
+local draw_logs = function()
+    local name = {
+"",
+"████   ███   ████ █   █  ███  ████   ███  █  █  ",
+"█   █ █   █ █     ██  █ █   █ █   █ █   █ █ █  ",
+"████  █████ █  ██ █ █ █ █████ ████  █   █ ██ █  ",
+"█   █ █   █ █   █ █  ██ █   █ █   █ █   █ █  █  ",
+"█   █ █   █  ███  █   █ █   █ █   █  ███  █   █ ",
+" ",
+"[ Welcome to ragnar0k.cc, customer.]"   ,                                                                                                                                                                                                 
+--O.G. L.E.A.K.S.
+    }
+
+    client.exec("clear")
+	
+    for _, line in pairs(name) do
+        printc("\affd359"..line) 
+        --client.color_log(255 / 6 * _, 8 / 6 * _, 5/ 6 * _, line)
+    end
+
+
+    client.exec("con_filter_enable 1")
+    client.exec("con_filter_text IrWL5106TZZKNFPz4P4Gl3pSN?J370f5hi373ZjPg%VOVh6lN")
+end
+draw_logs()
+
 local data = database.read("db1") or {}
 
 data.load_count = (data.load_count or 0) + 1
@@ -265,6 +326,8 @@ local menu = {
     main_clr = ui.new_color_picker("AA", "Anti-aimbot angles", "» \aeb613499Indicators color", 150, 200, 60, 255),
     indicatorsx = ui.new_multiselect('AA', 'Anti-aimbot angles', '• Select Indicators', "Watermark", "Crosshair", "Notify"),
     notifys = ui.new_multiselect('AA', 'Anti-aimbot angles', '\aeb613499»\aFFFFFFFF Select Notifications', "Hit", "Misses", "Switches"),
+    notifys2 = ui.new_combobox('AA', 'Anti-aimbot angles', '\aeb613499»\aFFFFFFFF Notifications Type', "1", "2"),
+    consolelogs = ui.new_checkbox("AA", "Anti-aimbot angles", "\aeb613499»\aFFFFFFFF Console logs"),
     ui_forward = ui.new_hotkey("AA", "Anti-aimbot angles", "\aeb613499»\aFFFFFFFF Manual forward"),
     ui_left = ui.new_hotkey("AA","Anti-aimbot angles", "\aeb613499»\aFFFFFFFF Manual left"),
     ui_right = ui.new_hotkey("AA","Anti-aimbot angles", "\aeb613499»\aFFFFFFFF Manual right"),
@@ -663,7 +726,9 @@ local function noti()
             local left_box_1 = math.floor(info.box_left_1)
             local right_box_1 = math.floor(info.box_right_1)
 
-            solus_render.container(render.notifications.c_var.screen[1] / 2 - text_size[1] / 2 - 4 + 5,add_y - 21,text_size[1] +8 + 4 - 7 + 4 + 14 ,text_size[2] + 7 ,r,g,b,alpha,alpha2 )
+            if ui.get(menu.notifys2) == "1" then
+                solus_render.container(render.notifications.c_var.screen[1] / 2 - text_size[1] / 2 - 4 + 5,add_y - 21,text_size[1] +8 + 4 - 7 + 4 + 14 ,text_size[2] + 7 ,r,g,b,alpha,alpha2 )
+            end
 
 
             local svg = {
@@ -675,12 +740,25 @@ local function noti()
 
             renderer.texture(svg,render.notifications.c_var.screen[1] / 2 - text_size[1] / 2  + 5,add_y - 19 + 1,12 ,12 ,r,g,b,alpha3)
 
-            renderer.text(
-                render.notifications.c_var.screen[1] / 2 - text_size[1] / 2  + 5 + 14,add_y - 19 + 1,
-                255, 255, 255, 255,nil,0,info.text
-            )
+            if ui.get(menu.notifys2) == "2" then
+                glow_module(render.notifications.c_var.screen[1] / 2 - text_size[1] / 2  + 5 + 3, add_y - 19 + 8, text_size[1]+11, 0, 10 , 0, {r, g, b, 65*(alpha/255)}, {r, g, b, 65*(alpha/255)})
+                renderer.text(
+                    render.notifications.c_var.screen[1] / 2 - text_size[1] / 2  + 5 + 14,add_y - 19 + 1,
+                    255, 255, 255, 255,nil,0,info.text
+                )
+            elseif ui.get(menu.notifys2) == "1" then
+                renderer.text(
+                    render.notifications.c_var.screen[1] / 2 - text_size[1] / 2  + 5 + 14,add_y - 19 + 1,
+                    255, 255, 255, 255,nil,0,"\affffff7a"..info.text
+                )
+            end
+
     
-            y = y - 30
+            if ui.get(menu.notifys2) == "1" then
+                y = y - 30
+            else
+                y = y - 20
+            end
             if info.timer + 4 < globals.realtime() then
                 table.remove(render.notifications.table_text,i)
             end
@@ -872,12 +950,17 @@ local function normalize_yaw(yaw)
         
 
         local function hitxx(e)
+            local r,g,b,a = ui.get(menu.main_clr)
+            if ui.get(menu.consolelogs) then
+                printc("\a"..RGBtoHEX(r,g,b).."ragnar0k ~ \affffff"..string.format(" Hit %s for %s [%s] in the %s [%s] [hc: %s, bt: %s, lc: %s] ", string.lower(entity.get_player_name(e.target)), e.damage, stored_shot.damage, hitgroup_names[e.hitgroup + 1] or '?', stored_shot.hitbox, math.floor(e.hit_chance).."%", stored_shot.backtrack, stored_shot.lagcomp))
+            end
+
             if not contains(menu.indicatorsx, "Notify") or not contains(menu.notifys, "Hit")  then return end
             local clr = "\affffff7a" -- \a6cd977ff
             local clr2 = "\a6cd977ff" -- \a6cd977ff
             local dflt = "\affffffff"
             table.insert(render.notifications.table_text, {
-                text = string.format(" \affffff7aHit %s for %s [%s] in the %s [%s] [hc: %s, bt: %s, lc: %s] ", string.lower(entity.get_player_name(e.target)), e.damage, stored_shot.damage, hitgroup_names[e.hitgroup + 1] or '?', stored_shot.hitbox, math.floor(e.hit_chance).."%", stored_shot.backtrack, stored_shot.lagcomp),
+                text = string.format(" Hit %s for %s [%s] in the %s [%s] [hc: %s, bt: %s, lc: %s] ", string.lower(entity.get_player_name(e.target)), e.damage, stored_shot.damage, hitgroup_names[e.hitgroup + 1] or '?', stored_shot.hitbox, math.floor(e.hit_chance).."%", stored_shot.backtrack, stored_shot.lagcomp),
                 timer = globals.realtime(),
             
                 smooth_y = render.notifications.c_var.screen[2] + 100,
@@ -895,9 +978,14 @@ local function normalize_yaw(yaw)
         end
 
         local function missxx(e)
+            local r,g,b,a = ui.get(menu.main_clr)
+            if ui.get(menu.consolelogs) then
+                printc("\a"..RGBtoHEX(r,g,b).."ragnar0k ~ \affffff"..string.format(" Missed %s's %s due to %s [dmg: %s, bt: %s, lc: %s] ", string.lower(entity.get_player_name(e.target)), stored_shot.hitbox, e.reason, stored_shot.damage, stored_shot.lagcomp, stored_shot.backtrack))
+            end
+
             if not contains(menu.indicatorsx, "Notify") or not contains(menu.notifys, "Misses")  then return end
             table.insert(render.notifications.table_text, {
-                text = string.format(" \affffff7aMissed %s's %s due to %s [dmg: %s, bt: %s, lc: %s] ", string.lower(entity.get_player_name(e.target)), stored_shot.hitbox, e.reason, stored_shot.damage, stored_shot.lagcomp, stored_shot.backtrack),
+                text = string.format(" Missed %s's %s due to %s [dmg: %s, bt: %s, lc: %s] ", string.lower(entity.get_player_name(e.target)), stored_shot.hitbox, e.reason, stored_shot.damage, stored_shot.lagcomp, stored_shot.backtrack),
                 timer = globals.realtime(),
             
                 smooth_y = render.notifications.c_var.screen[2] + 100,
@@ -929,6 +1017,7 @@ local function normalize_yaw(yaw)
 
             local ox, oy, oz = entity.get_prop(me, "m_vecOrigin")
             local ex, ey, ez = entity.get_prop(shooter, "m_vecOrigin")
+            local r,g,b,a = ui.get(menu.main_clr)
             local target = entity.get_player_name(client.current_threat())
 
             local dist = ((e.y - ey)*lx - (e.x - ex)*ly + e.x*ey - e.y*ex) / math.sqrt((e.y-ey)^2 + (e.x - ex)^2)
@@ -936,8 +1025,11 @@ local function normalize_yaw(yaw)
             if math.abs(dist) <= 80 and globals.curtime() - brute.last_miss > 0.015 then
                 
                 if ui.get(menu.contains) == "Default" and contains(menu.notifys, "Switches") then
+                    if ui.get(menu.consolelogs) then
+                        printc("\a"..RGBtoHEX(r,g,b).."ragnar0k ~ \affffff".."Switched side due to shot [target: "..target.."]")
+                    end
                     table.insert(render.notifications.table_text, {
-                        text = "\affffff7aSwitched side due to shot [target: "..target.."]",
+                        text = "Switched side due to shot [target: "..target.."]",
                         timer = globals.realtime(),
                     
                         smooth_y = render.notifications.c_var.screen[2] + 100,
@@ -956,8 +1048,11 @@ local function normalize_yaw(yaw)
                 elseif ui.get(menu.contains) == "Random" and contains(menu.notifys, "Switches") and contains(menu.indicatorsx, "Notify") then
                     brute.jitter = math.random(60, 75)
                     ui.set(ref.jitter[2], brute.jitter)
+                    if ui.get(menu.consolelogs) then
+                        printc("\a"..RGBtoHEX(r,g,b).."ragnar0k ~ \affffff".."Generated random jitter [target: "..target.." | jitter: "..brute.jitter.."]")
+                    end
                     table.insert(render.notifications.table_text, {
-                        text = "\affffff7aGenerated random jitter [target: "..target.." | jitter: "..brute.jitter.."]",
+                        text = "Generated random jitter [target: "..target.." | jitter: "..brute.jitter.."]",
                         timer = globals.realtime(),
                     
                         smooth_y = render.notifications.c_var.screen[2] + 100,
@@ -976,8 +1071,12 @@ local function normalize_yaw(yaw)
                 else
                     if contains(menu.notifys, "Switches") and contains(menu.indicatorsx, "Notify") and contains(menu.indicatorsx, "Notify") then
                     brute.phase = brute.phase + 1
+                    local r,g,b,a = ui.get(menu.main_clr)
+                    if ui.get(menu.consolelogs) then
+                        printc("\a"..RGBtoHEX(r,g,b).."ragnar0k ~ \affffff".."Switched side due to shot [target: "..target.." | phase "..brute.phase.."]")
+                    end
                     table.insert(render.notifications.table_text, {
-                        text = "\affffff7aSwitched side due to shot [target: "..target.." | phase "..brute.phase.."]",
+                        text = "Switched side due to shot [target: "..target.." | phase "..brute.phase.."]",
                         timer = globals.realtime(),
                     
                         smooth_y = render.notifications.c_var.screen[2] + 100,
@@ -1015,8 +1114,11 @@ local function normalize_yaw(yaw)
         brute.misses = { }
         brute.phase = 0
         if ui.get(menu.antibrute_switch)  and contains(menu.notifys, "Switches") and contains(menu.indicatorsx, "Notify")  then
+            if ui.get(menu.consolelogs) then
+                printc("\a"..RGBtoHEX(r,g,b).."ragnar0k ~ \affffff".."Anti-bruteforce data has been reset")
+            end
             table.insert(render.notifications.table_text, {
-                text = "\affffff7aAnti-bruteforce data has been reset",
+                text = "Anti-bruteforce data has been reset",
                 timer = globals.realtime(),
             
                 smooth_y = render.notifications.c_var.screen[2] + 100,
@@ -1081,8 +1183,12 @@ local function normalize_yaw(yaw)
 
 
 
+    local r,g,b,a = ui.get(menu.main_clr)
+    if ui.get(menu.consolelogs) then
+        printc("\a"..RGBtoHEX(r,g,b).."ragnar0k ~ \affffff".."Imported anti-bruteforce phases")
+    end
     table.insert(render.notifications.table_text, {
-        text = " \affffff7aImported anti-bruteforce phases",
+        text = " Imported anti-bruteforce phases",
         timer = globals.realtime(),
     
         smooth_y = render.notifications.c_var.screen[2] + 100,
@@ -1119,10 +1225,12 @@ for key, value in pairs(antibrute) do
     end
 end
 
-
+if ui.get(menu.consolelogs) then
+    printc("\a"..RGBtoHEX(r,g,b).."ragnar0k ~ \affffff".."Exported anti-bruteforce phases to clipboard")
+end
 clipboard_export(requirements.base64.encode(json.stringify(settings), base64))
 table.insert(render.notifications.table_text, {
-    text = " \affffff7aExported anti-bruteforce phases to clipboard",
+    text = " Exported anti-bruteforce phases to clipboard",
     timer = globals.realtime(),
 
     smooth_y = render.notifications.c_var.screen[2] + 100,
@@ -1143,7 +1251,7 @@ end
 
 function createlog(text)
     table.insert(render.notifications.table_text, {
-        text = "\affffff7a"..text,
+        text = ""..text,
         timer = globals.realtime(),
     
         smooth_y = render.notifications.c_var.screen[2] + 100,
@@ -2110,9 +2218,11 @@ end
                     if ui.get(menu.retard) == "Visuals" then
                     SetTableVisibility({menu.main_clr, menu.indclrtext, menu.indicatorsx}, true)
                     ui.set_visible(menu.notifys, (true and contains(menu.indicatorsx, "Notify")))
+                    ui.set_visible(menu.notifys2, (true and contains(menu.indicatorsx, "Notify")))
+                    ui.set_visible(menu.consolelogs, (true and contains(menu.indicatorsx, "Notify")))
                     SetTableVisibility({menu.arrows, menu.main_clr4}, false)
                     else
-                    SetTableVisibility({menu.main_clr, menu.arrows, menu.main_clr4, menu.indclrtext, menu.indicatorsx, menu.notifys}, false)
+                    SetTableVisibility({menu.main_clr, menu.arrows, menu.main_clr4, menu.indclrtext, menu.indicatorsx, menu.notifys, menu.notifys2, menu.consolelogs}, false)
                     end
                     if ui.get(menu.retard) == "Anti-Aim" then
                 
@@ -2471,7 +2581,7 @@ end
 
 
                     table.insert(render.notifications.table_text, {
-                        text = ' \affffff7aImported anti-aim config',
+                        text = ' Imported anti-aim config',
                         timer = globals.realtime(),
                     
                         smooth_y = render.notifications.c_var.screen[2] + 100,
@@ -2507,11 +2617,11 @@ end
                         end
                     end
                 end
-
+                local r,g,b,a = ui.get(menu.main_clr)
 
                 clipboard_export(requirements.base64.encode(json.stringify(settings), base64))
                 table.insert(render.notifications.table_text, {
-                    text = ' \affffff7aExported anti-aim config to clipboard',
+                    text = ' Exported anti-aim config to clipboard',
                     timer = globals.realtime(),
                 
                     smooth_y = render.notifications.c_var.screen[2] + 100,
