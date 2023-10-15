@@ -264,6 +264,7 @@ local menu = {
     indclrtext = ui.new_label("AA", "Anti-aimbot angles", "» \aeb613499Indicators color"),
     main_clr = ui.new_color_picker("AA", "Anti-aimbot angles", "» \aeb613499Indicators color", 150, 200, 60, 255),
     indicatorsx = ui.new_multiselect('AA', 'Anti-aimbot angles', '• Select Indicators', "Watermark", "Crosshair", "Notify"),
+    notifys = ui.new_multiselect('AA', 'Anti-aimbot angles', '\aeb613499»\aFFFFFFFF Select Notifications', "Hit", "Misses", "Switches"),
     ui_forward = ui.new_hotkey("AA", "Anti-aimbot angles", "\aeb613499»\aFFFFFFFF Manual forward"),
     ui_left = ui.new_hotkey("AA","Anti-aimbot angles", "\aeb613499»\aFFFFFFFF Manual left"),
     ui_right = ui.new_hotkey("AA","Anti-aimbot angles", "\aeb613499»\aFFFFFFFF Manual right"),
@@ -871,7 +872,7 @@ local function normalize_yaw(yaw)
         
 
         local function hitxx(e)
-            if not contains(menu.indicatorsx, "Notify")  then return end
+            if not contains(menu.indicatorsx, "Notify") or not contains(menu.notifys, "Hit")  then return end
             local clr = "\affffff7a" -- \a6cd977ff
             local clr2 = "\a6cd977ff" -- \a6cd977ff
             local dflt = "\affffffff"
@@ -894,7 +895,7 @@ local function normalize_yaw(yaw)
         end
 
         local function missxx(e)
-            if not contains(menu.indicatorsx, "Notify")  then return end
+            if not contains(menu.indicatorsx, "Notify") or not contains(menu.notifys, "Misses")  then return end
             table.insert(render.notifications.table_text, {
                 text = string.format(" \affffff7aMissed %s's %s due to %s [dmg: %s, bt: %s, lc: %s] ", string.lower(entity.get_player_name(e.target)), stored_shot.hitbox, e.reason, stored_shot.damage, stored_shot.lagcomp, stored_shot.backtrack),
                 timer = globals.realtime(),
@@ -914,7 +915,7 @@ local function normalize_yaw(yaw)
         end
 
         local function brute_impact(e)
-            if not ui.get(menu.antibrute_switch) and not contains(menu.indicatorsx, "Notify")  then return end
+            if (not ui.get(menu.antibrute_switch) and not contains(menu.indicatorsx, "Notify")) and not contains(menu.notifys, "Switches")  then return end
             local me = entity.get_local_player()
 
             if not entity.is_alive(me) then return end
@@ -934,7 +935,7 @@ local function normalize_yaw(yaw)
 
             if math.abs(dist) <= 80 and globals.curtime() - brute.last_miss > 0.015 then
                 
-                if ui.get(menu.contains) == "Default" then
+                if ui.get(menu.contains) == "Default" and contains(menu.notifys, "Switches") then
                     table.insert(render.notifications.table_text, {
                         text = "\affffff7aSwitched side due to shot [target: "..target.."]",
                         timer = globals.realtime(),
@@ -952,7 +953,7 @@ local function normalize_yaw(yaw)
                         box_right_1 = 0
                     }) 
                     
-                elseif ui.get(menu.contains) == "Random" then
+                elseif ui.get(menu.contains) == "Random" and contains(menu.notifys, "Switches") and contains(menu.indicatorsx, "Notify") then
                     brute.jitter = math.random(60, 75)
                     ui.set(ref.jitter[2], brute.jitter)
                     table.insert(render.notifications.table_text, {
@@ -973,6 +974,7 @@ local function normalize_yaw(yaw)
                     }) 
 
                 else
+                    if contains(menu.notifys, "Switches") and contains(menu.indicatorsx, "Notify") and contains(menu.indicatorsx, "Notify") then
                     brute.phase = brute.phase + 1
                     table.insert(render.notifications.table_text, {
                         text = "\affffff7aSwitched side due to shot [target: "..target.." | phase "..brute.phase.."]",
@@ -990,6 +992,7 @@ local function normalize_yaw(yaw)
                         box_left_1 = 0,
                         box_right_1 = 0
                     }) 
+                end
                 end
                 brute.last_miss = globals.curtime()
                 if brute.misses[shooter] == nil then
@@ -1011,7 +1014,7 @@ local function normalize_yaw(yaw)
         brute.misses_ind = { }
         brute.misses = { }
         brute.phase = 0
-        if ui.get(menu.antibrute_switch) then
+        if ui.get(menu.antibrute_switch)  and contains(menu.notifys, "Switches") and contains(menu.indicatorsx, "Notify")  then
             table.insert(render.notifications.table_text, {
                 text = "\affffff7aAnti-bruteforce data has been reset",
                 timer = globals.realtime(),
@@ -2106,9 +2109,10 @@ end
                     end
                     if ui.get(menu.retard) == "Visuals" then
                     SetTableVisibility({menu.main_clr, menu.indclrtext, menu.indicatorsx}, true)
+                    ui.set_visible(menu.notifys, (true and contains(menu.indicatorsx, "Notify")))
                     SetTableVisibility({menu.arrows, menu.main_clr4}, false)
                     else
-                    SetTableVisibility({menu.main_clr, menu.arrows, menu.main_clr4, menu.indclrtext, menu.indicatorsx}, false)
+                    SetTableVisibility({menu.main_clr, menu.arrows, menu.main_clr4, menu.indclrtext, menu.indicatorsx, menu.notifys}, false)
                     end
                     if ui.get(menu.retard) == "Anti-Aim" then
                 
