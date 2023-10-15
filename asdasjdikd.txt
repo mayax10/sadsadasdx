@@ -324,13 +324,10 @@ local menu = {
     
     indclrtext = ui.new_label("AA", "Anti-aimbot angles", "» \aeb613499Indicators color"),
     main_clr = ui.new_color_picker("AA", "Anti-aimbot angles", "» \aeb613499Indicators color", 150, 200, 60, 255),
-    indicatorsx = ui.new_multiselect('AA', 'Anti-aimbot angles', '• Select Indicators', "Watermark", "Crosshair", "Notify"),
+    indicatorsx = ui.new_multiselect('AA', 'Anti-aimbot angles', '• Select Indicators', "Watermark", "Crosshair", "Notify", "DTM"),
     notifys = ui.new_multiselect('AA', 'Anti-aimbot angles', '\aeb613499»\aFFFFFFFF Select Notifications', "Hit", "Misses", "Switches"),
     notifys2 = ui.new_combobox('AA', 'Anti-aimbot angles', '\aeb613499»\aFFFFFFFF Notifications Type', "1", "2"),
     consolelogs = ui.new_checkbox("AA", "Anti-aimbot angles", "\aeb613499»\aFFFFFFFF Console logs"),
-    ui_forward = ui.new_hotkey("AA", "Anti-aimbot angles", "\aeb613499»\aFFFFFFFF Manual forward"),
-    ui_left = ui.new_hotkey("AA","Anti-aimbot angles", "\aeb613499»\aFFFFFFFF Manual left"),
-    ui_right = ui.new_hotkey("AA","Anti-aimbot angles", "\aeb613499»\aFFFFFFFF Manual right"),
     fs_toggle = ui.new_hotkey("AA", "Anti-aimbot angles", "\aeb613499»\aFFFFFFFF Freestanding"),
     lagcomp = ui.new_checkbox("AA", "Anti-aimbot angles", "\aeb613499»\aFFFFFFFF Low FL on on-shot"),
     main_clr4 = ui.new_color_picker("AA", "Anti-aimbot angles", "\aeb613499»\aFFFFFFFF Manual AA Arrows", 145, 145, 255, 255),
@@ -637,7 +634,8 @@ function dtmanager()
 
     
 
-    local alpha2 = animations.anim_new('sadasdsfxxsa', (ref.dt[1] and false) and 1 or 0)
+    local alpha2 = animations.anim_new('sadasdsfxxsa', (ref.dt[1] and ui.get(menu.fs_toggle) and contains(menu.indicatorsx, "DTM") or ui.is_menu_open() and contains(menu.indicatorsx, "DTM")) and 1 or 0)
+    local mxx = animations.anim_new('sadasdsfxxsxa', (ref.dt[1] and ui.get(menu.fs_toggle) and contains(menu.indicatorsx, "DTM") or ui.is_menu_open() and contains(menu.indicatorsx, "DTM")) and mx or 0)
 
     local aA = {
         {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 80 / 30))*alpha2},
@@ -660,6 +658,18 @@ function dtmanager()
     }
 
     renderer_text(x2, y2, 235, 235, 235, 255*alpha2, "c", 0, "defensive dt "..string.format("\a%sm\a%sa\a%sn\a%sa\a%sg\a%se\a%sr", RGBAtoHEX(unpack(aA[1])), RGBAtoHEX(unpack(aA[2])), RGBAtoHEX(unpack(aA[3])), RGBAtoHEX(unpack(aA[4])), RGBAtoHEX(unpack(aA[5])), RGBAtoHEX(unpack(aA[6])), RGBAtoHEX(unpack(aA[7])), RGBAtoHEX(unpack(aA[8])), RGBAtoHEX(unpack(aA[9])),RGBAtoHEX(unpack(aA[10])),RGBAtoHEX(unpack(aA[11])),RGBAtoHEX(unpack(aA[12])),RGBAtoHEX(unpack(aA[13])),RGBAtoHEX(unpack(aA[14])),RGBAtoHEX(unpack(aA[15])),RGBAtoHEX(unpack(aA[16])),RGBAtoHEX(unpack(aA[17]))))
+    
+    renderer.gradient(x2-mx/2, y2+my, mx+3, 4, 0,0,0, 127.5*alpha2, 0,0,0,127.5*alpha2, false)
+    renderer.gradient(x2-mxx/2+2, y2+my+1, mxx, 1, r,g,b, 255*alpha2, r,g,b, 255*alpha2, false)
+
+    local svg = {
+        32,
+        32,
+        '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><title>dice</title><path fill="#FFFFFF" d="M27 6h-16c-2.75 0-5 2.25-5 5v16c0 2.75 2.25 5 5 5h16c2.75 0 5-2.25 5-5v-16c0-2.75-2.25-5-5-5zM13 28c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3zM13 16c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3zM19 22c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3zM25 28c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3zM25 16c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3zM25.899 4c-0.467-2.275-2.491-4-4.899-4h-16c-2.75 0-5 2.25-5 5v16c0 2.408 1.725 4.432 4 4.899v-19.899c0-1.1 0.9-2 2-2h19.899z"></path></svg>',
+    }
+    local svg = renderer.load_svg(svg[3], 32 , 32 )
+
+    renderer.texture(svg,x2-16, y/3-95,32 ,32 ,r,g,b,255*alpha2)
 end
 
 function watermark_ragnar0k()
@@ -749,7 +759,7 @@ local function noti()
                 info.alpha2 = render:lerp(info.alpha2,1,globals.frametime() * 4)
                 info.alpha3 = render:lerp(info.alpha3,255,globals.frametime() * 4)
 
-                info.smooth_y = render:lerp(info.smooth_y,y,globals.frametime() * 2)
+                info.smooth_y = render:lerp(info.smooth_y,y,globals.frametime() * 5)
             
                 info.box_left = render:lerp(info.box_left,text_size[1] - text_size[1] /2 -2,globals.frametime() * 1)
                 info.box_right = render:lerp(info.box_right,text_size[1]  - text_size[1] /2 +4,globals.frametime() * 1)
@@ -782,7 +792,6 @@ local function noti()
             renderer.texture(svg,render.notifications.c_var.screen[1] / 2 - text_size[1] / 2  + 5,add_y - 19 + 1,12 ,12 ,r,g,b,alpha3)
 
             if ui.get(menu.notifys2) == "2" then
-                glow_module(render.notifications.c_var.screen[1] / 2 - text_size[1] / 2  + 5 + 3, add_y - 19 + 8, text_size[1]+11, 0, 10 , 0, {r, g, b, 65*(alpha/255)}, {r, g, b, 65*(alpha/255)})
                 renderer.text(
                     render.notifications.c_var.screen[1] / 2 - text_size[1] / 2  + 5 + 14,add_y - 19 + 1,
                     255, 255, 255, 255,nil,0,info.text
@@ -1950,27 +1959,12 @@ end
                     
                     
 
-                    ui.set(menu.ui_forward, 'On hotkey')
-                    ui.set(menu.ui_left, 'On hotkey')
-                    ui.set(menu.ui_right, 'On hotkey')
                     if (ui.get(menu.fs_toggle)) then
                         yaw_direction = 0
                         last_press_t_dir = 0
                         Mode = "Off"
                     else
-                        if ui.get(menu.ui_forward) and last_press_t_dir + 0.2 < globals.curtime() then
-                            Mode = "Forward"
-                            yaw_direction = yaw_direction == 180 and 0 or 180
-                            last_press_t_dir = globals.curtime()
-                        elseif ui.get(menu.ui_right) and last_press_t_dir + 0.2 < globals.curtime() then
-                            Mode = "Right"
-                            yaw_direction = yaw_direction == 90 and 0 or 90
-                            last_press_t_dir = globals.curtime()
-                        elseif ui.get(menu.ui_left) and last_press_t_dir + 0.2 < globals.curtime() then
-                            Mode = "Left"
-                            yaw_direction = yaw_direction == -90 and 0 or -90
-                            last_press_t_dir = globals.curtime()
-                        elseif last_press_t_dir > globals.curtime() then
+                        if last_press_t_dir > globals.curtime() then
                             Mode = "Off"
                             last_press_t_dir = globals.curtime()
                             yaw_direction = 0
@@ -2026,10 +2020,10 @@ end
                             if is_onground then
                                 ui.set(ref.pitch[1], "Down")
                             end
-                            if ui.get(menu.breaker_switch) and not is_onground then
+                            if ui.get(menu.breaker_switch) then
                                 local dtyaw = animations.anim_new('sdxasdsxs', ref.dt[1] and 99 or 25)
                                 local dtyaw2 = animations.anim_new('sdxasdsxsx', ref.dt[1] and -180 or 99)
-                                if is_defensive_active() then
+                                if is_defensive_active() and not is_onground then
                                     bigyaw = 0
                                     if cmd.chokedcommands == 0 then
                                         bigyaw = math.random(dtyaw,dtyaw2)
@@ -2047,10 +2041,8 @@ end
                                         redo = "Down"
                                     end
                                     ui.set(ref.pitch[1], redo)
-                                    ui.set(ref.jitter[2], 10)
                                     ui.set(ref.yaw[1], "180")
                                     ui.set(ref.yaw[2], yaw_direction == 0 and bigyaw or yaw_direction)
-                                    ui.set(ref.byaw[2], 0)
 
                                 else
                                     breaker_active = false
@@ -2270,11 +2262,11 @@ end
                 
                     SetTableVisibility({menu.subtab_antiaim, menu.presets}, true)
                     SetTableVisibility({menu.conditiontab, export_btn, import_btn}, ui.get(menu.subtab_antiaim) ~= "Keybinds" and ui.get(menu.presets) == "Builder")
-                    SetTableVisibility({menu.ui_left, menu.ui_right, menu.ui_forward, menu.fs_toggle, menu.checkbox}, ui.get(menu.subtab_antiaim) == "Keybinds")
+                    SetTableVisibility({ menu.fs_toggle, menu.checkbox}, ui.get(menu.subtab_antiaim) == "Keybinds")
                     SetTableVisibility({menu.checkbox, menu.breaker_switch, menu.knife_hotkey}, ui.get(menu.subtab_antiaim) == "Addons")
                     SetTableVisibility({menu.knife_distance}, ui.get(menu.knife_hotkey) and ui.get(menu.subtab_antiaim) == "Addons")
                     else
-                    SetTableVisibility({menu.subtab_antiaim, menu.presets, menu.conditiontab, export_btn, import_btn, menu.ui_left, menu.ui_right, menu.ui_forward, menu.fs_toggle, menu.checkbox, menu.breaker_switch, menu.knife_hotkey, menu.knife_distance}, false)
+                    SetTableVisibility({menu.subtab_antiaim, menu.presets, menu.conditiontab, export_btn, import_btn, menu.fs_toggle, menu.checkbox, menu.breaker_switch, menu.knife_hotkey, menu.knife_distance}, false)
                     end
                     if ui.get(menu.retard) == "Misc" then
                     SetTableVisibility({menu.lagcomp, menu.animfucker, menu.ctagenable}, true)
