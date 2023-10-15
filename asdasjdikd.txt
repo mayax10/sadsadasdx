@@ -2357,7 +2357,7 @@ end
                         end
                     end
 
-                    if ui.get(menu.retard) == "Anti-Aim" and ui.get(menu.subtab_antiaim) == "Anti-Aim" and (ui.get(menu.presets) == "\aeb613499PRESET: \aFFFFFFFFDynamic" or ui.get(menu.presets) == "\aeb613499PRESET: \aFFFFFFFFRidiculous") then
+                    if ui.get(menu.retard) == "Anti-Aim" and ui.get(menu.subtab_antiaim) == "Anti-Aim" and (ui.get(menu.presets) == "\aeb613499PRESET: \aFFFFFFFFDynamic" or ui.get(menu.presets) == "\aeb613499PRESET: \aFFFFFFFFRidiculous" or ui.get(menu.presets) == "\aeb613499PRESET: \aFFFFFFFFTalentdinalabun") then
                         ui.set_visible(menu.cannotview, true)
                     else
                         ui.set_visible(menu.cannotview, false)
