@@ -1883,8 +1883,8 @@ end
                             if is_onground then
                                 ui.set(ref.pitch[1], "Down")
                             end
-                            if ui.get(menu.breaker_switch) and not is_onground then
-                                if is_defensive_active() then
+                            if ui.get(menu.breaker_switch) then
+                                if is_defensive_active() and not is_onground then
                                     breaker_active = true
                                     ui.set(ref.pitch[1], "Up")
                                     ui.set(ref.jitter[2], 10)
