@@ -38,6 +38,10 @@ function RGBAtoHEX(redArg, greenArg, blueArg, alphaArg)
     return string.format('%.2x%.2x%.2x%.2x', redArg, greenArg, blueArg, alphaArg)
 end
 
+function RGBtoHEX(redArg, greenArg, blueArg)
+    return string.format('%.2x%.2x%.2x', redArg, greenArg, blueArg)
+end
+
 local hitgroup_names = {'generic', 'head', 'chest', 'stomach', 'left arm', 'right arm', 'left leg', 'right leg', 'neck', '?', 'gear'}
 function fired(e)
     stored_shot = {
@@ -153,6 +157,63 @@ angle3d_struct,
 vec_struct
 )
 
+local printc do
+    ffi.cdef[[
+        typedef struct { uint8_t r; uint8_t g; uint8_t b; uint8_t a; } color_struct_t;
+    ]]
+
+	local print_interface = ffi.cast("void***", client.create_interface("vstdlib.dll", "VEngineCvar007"))
+	local color_print_fn = ffi.cast("void(__cdecl*)(void*, const color_struct_t&, const char*, ...)", print_interface[0][25])
+
+    -- 
+    local hex_to_rgb = function (hex)
+        return tonumber(hex:sub(1, 2), 16), tonumber(hex:sub(3, 4), 16), tonumber(hex:sub(5, 6), 16), tonumber(hex:sub(7, 8), 16)
+    end
+	
+	local raw = function(text, r, g, b, a)
+		local col = ffi.new("color_struct_t")
+		col.r, col.g, col.b, col.a = r or 217, g or 217, b or 217, a or 255
+	
+		color_print_fn(print_interface, col, tostring(text))
+	end
+
+	printc = function (...)
+		for i, v in ipairs{...} do
+			local r = "\aD9D9D9"..v
+			for col, text in r:gmatch("\a(%x%x%x%x%x%x)([^\a]*)") do
+				raw(text, hex_to_rgb(col))
+			end
+		end
+		raw "\n"
+	end
+end
+
+local draw_logs = function()
+    local name = {
+"",
+"████   ███   ████ █   █  ███  ████   ███  █  █  ",
+"█   █ █   █ █     ██  █ █   █ █   █ █   █ █ █  ",
+"████  █████ █  ██ █ █ █ █████ ████  █   █ ██ █  ",
+"█   █ █   █ █   █ █  ██ █   █ █   █ █   █ █  █  ",
+"█   █ █   █  ███  █   █ █   █ █   █  ███  █   █ ",
+" ",
+"[ Welcome to ragnar0k.cc, customer.]"   ,                                                                                                                                                                                                 
+--O.G. L.E.A.K.S.
+    }
+
+    client.exec("clear")
+	
+    for _, line in pairs(name) do
+        printc("\affd359"..line) 
+        --client.color_log(255 / 6 * _, 8 / 6 * _, 5/ 6 * _, line)
+    end
+
+
+    client.exec("con_filter_enable 1")
+    client.exec("con_filter_text IrWL5106TZZKNFPz4P4Gl3pSN?J370f5hi373ZjPg%VOVh6lN")
+end
+draw_logs()
+
 local data = database.read("db1") or {}
 
 data.load_count = (data.load_count or 0) + 1
@@ -252,29 +313,25 @@ ui.new_label("AA", "Anti-aimbot angles", " ")
 local menu = {
     retard = ui.new_combobox("AA", "Anti-aimbot angles", "» Tab selection", "Home","Anti-Aim", "Visuals", "Misc"),
     hometext2 = ui.new_label("aa", "anti-aimbot angles"," "),
-    hometext = ui.new_label("aa", "anti-aimbot angles","ragnar0k.cc ~ \aE1DEFD99join our discord below"),
-    discords = ui.new_button("aa", "anti-aimbot angles", "our discord" , function()
-        panorama.loadstring("SteamOverlayAPI.OpenExternalBrowserURL('https://discord.gg/ZGRM7K7YZp');")()
+    hometext = ui.new_label("aa", "anti-aimbot angles","ragnar0k.cc ~ \aE1DEFD99join our discord below"), --\aE1DEFD99
+    discords = ui.new_button("aa", "anti-aimbot angles", "DISCORD" , function()
+        panorama.loadstring("SteamOverlayAPI.OpenExternalBrowserURL('https://discord.gg/BkCcRjzCqR');")()
     end),
     subtab_antiaim = ui.new_combobox("AA", "Anti-aimbot angles", "» Section", "Anti-Aim", "Keybinds", "Anti-bruteforce", "Addons"),
-    presets = ui.new_combobox("AA", "Anti-aimbot angles", "» Anti-aim settings", "None", "\aE1DEFD99PRESET: \aFFFFFFFFDynamic", "\aE1DEFD99PRESET: \aFFFFFFFFRidiculous", "Builder"),
+    presets = ui.new_combobox("AA", "Anti-aimbot angles", "» Anti-aim settings", "None", "\aE1DEFD99PRESET: \aFFFFFFFFDynamic", "\aE1DEFD99PRESET: \aFFFFFFFFRidiculous", "\aE1DEFD99PRESET: \aFFFFFFFFTalentdinalabun", "Builder"),
     cannotview = ui.new_label("AA", "Anti-aimbot angles", "\aE1DEFD99[!] You cannot view settings while using a preset."),
     conditiontab = ui.new_combobox("AA", "Anti-aimbot angles",  "» Player state", "Global", "Standing", "Moving", "Air", "Air+crouch", "Crouch", "Slowwalk", "Fakelag"),
     
-    wmtype = ui.new_combobox("AA", "Anti-aimbot angles", "» \aE1DEFD99Watermark", "1","2"),
     indclrtext = ui.new_label("AA", "Anti-aimbot angles", "» \aE1DEFD99Indicators color"),
     main_clr = ui.new_color_picker("AA", "Anti-aimbot angles", "» \aE1DEFD99Indicators color", 150, 200, 60, 255),
-    indicators = ui.new_checkbox("AA", "Anti-aimbot angles", "» Under cross visuals"),
-    notifications = ui.new_checkbox("AA", "Anti-aimbot angles", "» Notifications"),
-    ui_forward = ui.new_hotkey("AA", "Anti-aimbot angles", "\aE1DEFD99»\aFFFFFFFF Manual forward"),
-    ui_left = ui.new_hotkey("AA","Anti-aimbot angles", "\aE1DEFD99»\aFFFFFFFF Manual left"),
-    ui_right = ui.new_hotkey("AA","Anti-aimbot angles", "\aE1DEFD99»\aFFFFFFFF Manual right"),
+    indicatorsx = ui.new_multiselect('AA', 'Anti-aimbot angles', '• Select Indicators', "Watermark", "Crosshair", "Notify", "DTM"),
+    notifys = ui.new_multiselect('AA', 'Anti-aimbot angles', '\aE1DEFD99»\aFFFFFFFF Select Notifications', "Hit", "Misses", "Switches"),
+    notifys2 = ui.new_combobox('AA', 'Anti-aimbot angles', '\aE1DEFD99»\aFFFFFFFF Notifications Type', "1", "2"),
+    consolelogs = ui.new_checkbox("AA", "Anti-aimbot angles", "\aE1DEFD99»\aFFFFFFFF Console logs"),
     fs_toggle = ui.new_hotkey("AA", "Anti-aimbot angles", "\aE1DEFD99»\aFFFFFFFF Freestanding"),
     lagcomp = ui.new_checkbox("AA", "Anti-aimbot angles", "\aE1DEFD99»\aFFFFFFFF Low FL on on-shot"),
     main_clr4 = ui.new_color_picker("AA", "Anti-aimbot angles", "\aE1DEFD99»\aFFFFFFFF Manual AA Arrows", 145, 145, 255, 255),
     arrows = ui.new_checkbox("AA", "Anti-aimbot angles", "\aE1DEFD99»\aFFFFFFFF Manual AA Arrows"),
-    state_panel = ui.new_checkbox("AA", "Anti-aimbot angles", "\aE1DEFD99»\aFFFFFFFF State panel"),
-    state_panel_color = ui.new_color_picker("AA", "Anti-aimbot angles", "\aE1DEFD99»\aFFFFFFFF State panel", 145, 145, 255, 255),
     breaker_switch = ui.new_checkbox("AA", "Anti-aimbot angles", "• Defensive Y/P"),
     ctagenable = ui.new_checkbox("AA", "Anti-aimbot angles", "• Clantag"),
     checkbox = ui.new_checkbox("AA", "Anti-aimbot angles", "• Defensive up-jump"),
@@ -564,6 +621,57 @@ local solus_render = (function()
     return solus_m
 end)()
 
+function dtmanager()
+    local x, y = client_screen_size()
+    local mx, my = renderer_measure_text("b", "dt defensive manager")
+    local r,g,b,a = ui.get(menu.main_clr)
+    local me = entity.get_local_player()
+
+    local y2 = y/3-50
+    local x2 = x/2
+    if not entity.is_alive(me) then return end
+    local user = entity.get_player_name(me)
+
+    
+
+    local alpha2 = animations.anim_new('sadasdsfxxsa', (ref.dt[1] and ui.get(menu.fs_toggle) and contains(menu.indicatorsx, "DTM") or ui.is_menu_open() and contains(menu.indicatorsx, "DTM")) and 1 or 0)
+    local mxx = animations.anim_new('sadasdsfxxsxa', (ref.dt[1] and ui.get(menu.fs_toggle) and contains(menu.indicatorsx, "DTM") or ui.is_menu_open() and contains(menu.indicatorsx, "DTM")) and mx or 0)
+
+    local aA = {
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 80 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 75 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 70 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 65 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 60 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 55 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 50 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 45 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 40 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 35 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 30 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 25 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 20 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 15 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 10 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 5 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 0 / 30))*alpha2}
+    }
+
+    renderer_text(x2, y2, 235, 235, 235, 255*alpha2, "c", 0, "defensive dt "..string.format("\a%sm\a%sa\a%sn\a%sa\a%sg\a%se\a%sr", RGBAtoHEX(unpack(aA[1])), RGBAtoHEX(unpack(aA[2])), RGBAtoHEX(unpack(aA[3])), RGBAtoHEX(unpack(aA[4])), RGBAtoHEX(unpack(aA[5])), RGBAtoHEX(unpack(aA[6])), RGBAtoHEX(unpack(aA[7])), RGBAtoHEX(unpack(aA[8])), RGBAtoHEX(unpack(aA[9])),RGBAtoHEX(unpack(aA[10])),RGBAtoHEX(unpack(aA[11])),RGBAtoHEX(unpack(aA[12])),RGBAtoHEX(unpack(aA[13])),RGBAtoHEX(unpack(aA[14])),RGBAtoHEX(unpack(aA[15])),RGBAtoHEX(unpack(aA[16])),RGBAtoHEX(unpack(aA[17]))))
+    
+    renderer.gradient(x2-mx/2, y2+my, mx+3, 4, 0,0,0, 127.5*alpha2, 0,0,0,127.5*alpha2, false)
+    renderer.gradient(x2-mxx/2+2, y2+my+1, mxx, 1, r,g,b, 255*alpha2, r,g,b, 255*alpha2, false)
+
+    local svg = {
+        32,
+        32,
+        '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><title>dice</title><path fill="#FFFFFF" d="M27 6h-16c-2.75 0-5 2.25-5 5v16c0 2.75 2.25 5 5 5h16c2.75 0 5-2.25 5-5v-16c0-2.75-2.25-5-5-5zM13 28c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3zM13 16c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3zM19 22c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3zM25 28c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3zM25 16c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3zM25.899 4c-0.467-2.275-2.491-4-4.899-4h-16c-2.75 0-5 2.25-5 5v16c0 2.408 1.725 4.432 4 4.899v-19.899c0-1.1 0.9-2 2-2h19.899z"></path></svg>',
+    }
+    local svg = renderer.load_svg(svg[3], 32 , 32 )
+
+    renderer.texture(svg,x2-16, y/3-95,32 ,32 ,r,g,b,255*alpha2)
+end
+
 function watermark_ragnar0k()
     local x, y = client_screen_size()
     local mx, my = renderer_measure_text("b", "ragnar0k.cc")
@@ -577,44 +685,31 @@ function watermark_ragnar0k()
     local mx2, my2 = renderer_measure_text("c", "ragnar0k.cc | "..user.." | "..build.." | latency: "..latency.." | "..hours..":"..minutes..":"..seconds)
     local xxx2 = renderer_measure_text("b", "r a g n a r 0 k . c c")
     local xxx, yyy = renderer_measure_text("c", user)
-    local alpha = animations.anim_new('sadasdfsa', ui.get(menu.wmtype) == "1" and 1 or 0)
-    local alpha2 = animations.anim_new('sadasdsfsa', ui.get(menu.wmtype) == "2" and 1 or 0)
+    local alpha2 = animations.anim_new('sadasdsfsa', contains(menu.indicatorsx, "Watermark") and 1 or 0)
 
-
-
-    local aA = {
-        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 80 / 30))*alpha},
-        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 75 / 30))*alpha},
-        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 70 / 30))*alpha},
-        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 65 / 30))*alpha},
-        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 60 / 30))*alpha},
-        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 55 / 30))*alpha},
-        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 50 / 30))*alpha},
-        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 45 / 30))*alpha},
-        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 40 / 30))*alpha},
-        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 35 / 30))*alpha},
-        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 30 / 30))*alpha},
-        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 25 / 30))*alpha},
-        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 20 / 30))*alpha},
-        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 15 / 30))*alpha},
-        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 10 / 30))*alpha},
-        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 5 / 30))*alpha},
-        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 0 / 30))*alpha}
-    }
-    local svg = {
-        32,
-        32,
-        '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><title>logo-Copy</title><path fill="#FFFFFF" d="M12.531 2.525c-0.381 0.188-0.756 0.369-0.844 0.406s-0.2 0.094-0.25 0.131c-0.050 0.031-0.569 0.288-1.156 0.569-0.581 0.281-1.706 0.825-2.5 1.212-0.787 0.381-1.594 0.775-1.794 0.869-0.194 0.094-0.394 0.219-0.438 0.275-0.094 0.112-0.281 0.581-0.8 1.981-0.175 0.481-0.356 0.962-0.4 1.062-0.044 0.106-0.106 0.281-0.125 0.387-0.025 0.113-0.075 0.219-0.106 0.238-0.031 0.025-0.056 0.081-0.056 0.137 0 0.050-0.037 0.181-0.087 0.287-0.194 0.45-1.475 3.956-1.475 4.044s0.406 1.725 0.875 3.55c0.106 0.425 0.212 0.831 0.225 0.906 0.094 0.481 0.256 1.006 0.306 1.025 0.038 0.012 0.75-0.738 1.587-1.669 0.844-0.925 1.569-1.7 1.625-1.712 0.056-0.019 0.525-0.044 1.037-0.069 0.519-0.019 1.050-0.050 1.188-0.063s0.756-0.044 1.375-0.063l1.125-0.037 1.063 0.969c0.588 0.531 1.069 1.012 1.081 1.069 0.031 0.131-0.025 0.144-1.081 0.188-0.75 0.031-0.963 0.063-1.056 0.144-0.1 0.094-2.65 2.894-8.194 9.006l-1.55 1.719 0.525 0.481c0.344 0.319 0.506 0.506 0.462 0.544-0.069 0.063-0.756 0.131-1.55 0.144l-0.488 0.012-0.531 0.563c-0.506 0.55-0.525 0.581-0.525 0.869v0.3h1.862l1.856-0.006 5.775-6.369c3.169-3.506 5.8-6.375 5.844-6.375 0.1 0 1.119 0.913 1.169 1.050 0.025 0.056 0.056 0.569 0.081 1.137s0.056 1.2 0.069 1.406c0.012 0.206 0.044 0.775 0.063 1.256l0.044 0.881-0.212 0.244c-0.113 0.131-0.806 0.894-1.531 1.7-0.731 0.806-1.331 1.488-1.331 1.519s0.037 0.069 0.081 0.081c0.1 0.031 2.137 0.344 2.525 0.394 0.169 0.019 0.781 0.113 1.375 0.2 0.594 0.094 1.181 0.169 1.313 0.169l0.238-0.006v-1.031c0-0.762 0.019-1.031 0.075-1.031 0.044 0 0.406 0.294 0.806 0.656s0.75 0.663 0.781 0.675c0.025 0.012 0.55-0.225 1.163-0.525s1.831-0.894 2.706-1.319c0.875-0.425 1.719-0.837 1.875-0.913 0.337-0.163 0.625-0.406 0.625-0.531 0-0.050 0.038-0.175 0.087-0.281 0.044-0.113 0.3-0.794 0.563-1.512 0.525-1.431 0.631-1.706 0.762-2.019 0.050-0.113 0.087-0.231 0.087-0.269s0.038-0.156 0.087-0.262c0.2-0.456 1.288-3.456 1.288-3.55 0-0.056-0.056-0.319-0.125-0.594-0.069-0.269-0.137-0.55-0.156-0.619-0.063-0.313-1.038-4.137-1.081-4.238-0.038-0.088-0.35 0.225-1.6 1.606-0.856 0.95-1.6 1.738-1.656 1.75-0.056 0.019-0.519 0.044-1.038 0.069-0.512 0.019-1.050 0.050-1.188 0.063s-0.75 0.044-1.363 0.069l-1.106 0.037-0.531-0.481c-0.325-0.294-0.531-0.531-0.531-0.606 0-0.069 0.413-0.581 0.988-1.213 0.538-0.6 0.981-1.125 0.981-1.175 0-0.044-0.5-0.537-1.119-1.1l-1.113-1.012-0.175 0.175c-0.094 0.1-0.569 0.625-1.063 1.162-0.488 0.544-0.919 0.988-0.95 0.988-0.075 0-0.3-0.188-0.813-0.662-0.419-0.381-0.4-0.319-0.456-1.713-0.019-0.531-0.050-1.125-0.063-1.313-0.019-0.188-0.044-0.731-0.063-1.2l-0.037-0.856 0.237-0.269c0.137-0.15 0.831-0.912 1.544-1.694 0.712-0.788 1.281-1.462 1.269-1.5-0.012-0.044-0.175-0.1-0.363-0.125s-0.675-0.1-1.087-0.169c-0.413-0.063-0.863-0.131-1-0.15-0.762-0.1-1.637-0.237-1.725-0.263-0.156-0.044-0.25 0.125-0.231 0.425 0.025 0.394-0.094 0.369-0.662-0.138-0.269-0.237-0.525-0.438-0.563-0.438s-0.381 0.15-0.756 0.337zM8.5 8.594c0.381 0.338 0.531 0.512 0.531 0.619 0 0.1-0.581 0.787-1.987 2.344-1.094 1.206-2.019 2.194-2.056 2.194-0.094 0-0.013-0.375 0.112-0.506 0.081-0.094 0.344-0.581 1.087-2.025 0.144-0.275 0.325-0.613 0.406-0.75s0.306-0.569 0.5-0.95c0.194-0.387 0.381-0.719 0.412-0.744 0.031-0.019 0.119-0.169 0.188-0.344 0.075-0.169 0.169-0.306 0.206-0.306 0.044 0 0.312 0.213 0.6 0.469zM20.531 20.663c1.656 0.456 1.781 0.494 1.781 0.581 0 0.1-3.069 3.444-3.163 3.444-0.056 0-0.087-0.075-0.094-0.238 0-0.125-0.012-0.288-0.025-0.356-0.025-0.15-0.081-1.3-0.131-2.769-0.038-0.9-0.031-1.075 0.044-1.075 0.050 0 0.762 0.181 1.587 0.413z"></path></svg>',
-    }
-    local svg = renderer.load_svg(svg[3], 32 , 32 )
-    renderer.texture(svg, 22,y/2,32,32 ,r,g,b,255*alpha)
-    renderer.gradient(0, y/2, 125, 33, 0,0,0, 125*alpha, 0,0,0,0, true)
-    renderer_text(22+32+7, y/2+3, 235, 235, 235, 255*alpha, "b", 0, string.format("\a%sr \a%sa \a%sg \a%sn \a%sa \a%sr \a%s0 \a%sk \a%s. \a%sc \a%sc", RGBAtoHEX(unpack(aA[1])), RGBAtoHEX(unpack(aA[2])), RGBAtoHEX(unpack(aA[3])), RGBAtoHEX(unpack(aA[4])), RGBAtoHEX(unpack(aA[5])), RGBAtoHEX(unpack(aA[6])), RGBAtoHEX(unpack(aA[7])), RGBAtoHEX(unpack(aA[8])), RGBAtoHEX(unpack(aA[9])),RGBAtoHEX(unpack(aA[10])),RGBAtoHEX(unpack(aA[11])),RGBAtoHEX(unpack(aA[12])),RGBAtoHEX(unpack(aA[13])),RGBAtoHEX(unpack(aA[14])),RGBAtoHEX(unpack(aA[15])),RGBAtoHEX(unpack(aA[16])),RGBAtoHEX(unpack(aA[17]))))
-    renderer_text(22+32+7+xxx/2, y/2+19, 235, 235, 235, 255*alpha, "c", 0, user)
-    glow_module(22+32+7, y/2+10, xxx2, 0, 10 , 0, {r, g, b, 90*alpha}, {r, g, b, 90*alpha})
+    
 
     -- second
 
+    local aA = {
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 80 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 75 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 70 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 65 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 60 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 55 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 50 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 45 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 40 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 35 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 30 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 25 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 20 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 15 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 10 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 5 / 30))*alpha2},
+        {r, g, b, 255 * math.abs(1 * math.cos(2 * math.pi * globals.curtime()/4 + 0 / 30))*alpha2}
+    }
 
     local x2 = x-15
     local y2 = 15
@@ -629,10 +724,11 @@ function watermark_ragnar0k()
     local svg = renderer.load_svg(svg[3], 12 , 12 )
 
     renderer.texture(svg,x2-mx2-34,y2-5,12 ,12 ,r,g,b,255*alpha2)
-    renderer_text(x2-mx2/2, y2, 235, 235, 235, 255*alpha2, "c", 0, "\a"..RGBAtoHEX(r,g,b,255*alpha2).."ragnar0k.cc\a"..RGBAtoHEX(255,255,255,127.5*alpha2).." | "..user.." | "..build.." | latency: "..latency.." | "..hours..":"..minutes..":"..seconds)
+    renderer_text(x2-mx2/2, y2, 235, 235, 235, 255*alpha2, "c", 0, string.format("\a"..RGBAtoHEX(unpack(aA[1])).."r\a"..RGBAtoHEX(unpack(aA[2])).."a\a"..RGBAtoHEX(unpack(aA[3])).."g\a"..RGBAtoHEX(unpack(aA[4])).."n\a"..RGBAtoHEX(unpack(aA[5])).."a\a"..RGBAtoHEX(unpack(aA[6])).."r\a"..RGBAtoHEX(unpack(aA[7])).."0\a"..RGBAtoHEX(unpack(aA[8])).."k\a"..RGBAtoHEX(unpack(aA[9]))..".\a"..RGBAtoHEX(unpack(aA[10])).."c\a"..RGBAtoHEX(unpack(aA[12])).."c").."\a"..RGBAtoHEX(255,255,255,127.5*alpha2).." | "..user.." | "..build.." | latency: "..latency.." | "..hours..":"..minutes..":"..seconds.."")
 end
 
 client.set_event_callback("paint", watermark_ragnar0k)
+client.set_event_callback("paint", dtmanager)
 
 
 local function noti()
@@ -663,7 +759,7 @@ local function noti()
                 info.alpha2 = render:lerp(info.alpha2,1,globals.frametime() * 4)
                 info.alpha3 = render:lerp(info.alpha3,255,globals.frametime() * 4)
 
-                info.smooth_y = render:lerp(info.smooth_y,y,globals.frametime() * 2)
+                info.smooth_y = render:lerp(info.smooth_y,y,globals.frametime() * 5)
             
                 info.box_left = render:lerp(info.box_left,text_size[1] - text_size[1] /2 -2,globals.frametime() * 1)
                 info.box_right = render:lerp(info.box_right,text_size[1]  - text_size[1] /2 +4,globals.frametime() * 1)
@@ -681,7 +777,9 @@ local function noti()
             local left_box_1 = math.floor(info.box_left_1)
             local right_box_1 = math.floor(info.box_right_1)
 
-            solus_render.container(render.notifications.c_var.screen[1] / 2 - text_size[1] / 2 - 4 + 5,add_y - 21,text_size[1] +8 + 4 - 7 + 4 + 14 ,text_size[2] + 7 ,r,g,b,alpha,alpha2 )
+            if ui.get(menu.notifys2) == "1" then
+                solus_render.container(render.notifications.c_var.screen[1] / 2 - text_size[1] / 2 - 4 + 5,add_y - 21,text_size[1] +8 + 4 - 7 + 4 + 14 ,text_size[2] + 7 ,r,g,b,alpha,alpha2 )
+            end
 
 
             local svg = {
@@ -693,12 +791,24 @@ local function noti()
 
             renderer.texture(svg,render.notifications.c_var.screen[1] / 2 - text_size[1] / 2  + 5,add_y - 19 + 1,12 ,12 ,r,g,b,alpha3)
 
-            renderer.text(
-                render.notifications.c_var.screen[1] / 2 - text_size[1] / 2  + 5 + 14,add_y - 19 + 1,
-                255, 255, 255, 255,nil,0,info.text
-            )
+            if ui.get(menu.notifys2) == "2" then
+                renderer.text(
+                    render.notifications.c_var.screen[1] / 2 - text_size[1] / 2  + 5 + 14,add_y - 19 + 1,
+                    255, 255, 255, 255,nil,0,info.text
+                )
+            elseif ui.get(menu.notifys2) == "1" then
+                renderer.text(
+                    render.notifications.c_var.screen[1] / 2 - text_size[1] / 2  + 5 + 14,add_y - 19 + 1,
+                    255, 255, 255, 255,nil,0,"\affffff7a"..info.text
+                )
+            end
+
     
-            y = y - 30
+            if ui.get(menu.notifys2) == "1" then
+                y = y - 30
+            else
+                y = y - 20
+            end
             if info.timer + 4 < globals.realtime() then
                 table.remove(render.notifications.table_text,i)
             end
@@ -887,14 +997,20 @@ local function normalize_yaw(yaw)
                 end
             end
         end
+        
 
         local function hitxx(e)
-            if not ui.get(menu.notifications) then return end
+            local r,g,b,a = ui.get(menu.main_clr)
+            if ui.get(menu.consolelogs) then
+                printc("\a"..RGBtoHEX(r,g,b).."ragnar0k ~ \affffff"..string.format(" Hit %s for %s [%s] in the %s [%s] [hc: %s, bt: %s, lc: %s] ", string.lower(entity.get_player_name(e.target)), e.damage, stored_shot.damage, hitgroup_names[e.hitgroup + 1] or '?', stored_shot.hitbox, math.floor(e.hit_chance).."%", stored_shot.backtrack, stored_shot.lagcomp))
+            end
+
+            if not contains(menu.indicatorsx, "Notify") or not contains(menu.notifys, "Hit")  then return end
             local clr = "\affffff7a" -- \a6cd977ff
             local clr2 = "\a6cd977ff" -- \a6cd977ff
             local dflt = "\affffffff"
             table.insert(render.notifications.table_text, {
-                text = string.format(" \affffff7aHit %s for %s [%s] in the %s [%s] [hc: %s, bt: %s, lc: %s] ", string.lower(entity.get_player_name(e.target)), e.damage, stored_shot.damage, hitgroup_names[e.hitgroup + 1] or '?', stored_shot.hitbox, math.floor(e.hit_chance).."%", stored_shot.backtrack, stored_shot.lagcomp),
+                text = string.format(" Hit %s for %s [%s] in the %s [%s] [hc: %s, bt: %s, lc: %s] ", string.lower(entity.get_player_name(e.target)), e.damage, stored_shot.damage, hitgroup_names[e.hitgroup + 1] or '?', stored_shot.hitbox, math.floor(e.hit_chance).."%", stored_shot.backtrack, stored_shot.lagcomp),
                 timer = globals.realtime(),
             
                 smooth_y = render.notifications.c_var.screen[2] + 100,
@@ -912,9 +1028,14 @@ local function normalize_yaw(yaw)
         end
 
         local function missxx(e)
-            if not ui.get(menu.notifications) then return end
+            local r,g,b,a = ui.get(menu.main_clr)
+            if ui.get(menu.consolelogs) then
+                printc("\a"..RGBtoHEX(r,g,b).."ragnar0k ~ \affffff"..string.format(" Missed %s's %s due to %s [dmg: %s, bt: %s, lc: %s] ", string.lower(entity.get_player_name(e.target)), stored_shot.hitbox, e.reason, stored_shot.damage, stored_shot.lagcomp, stored_shot.backtrack))
+            end
+
+            if not contains(menu.indicatorsx, "Notify") or not contains(menu.notifys, "Misses")  then return end
             table.insert(render.notifications.table_text, {
-                text = string.format(" \affffff7aMissed %s's %s due to %s [dmg: %s, bt: %s, lc: %s] ", string.lower(entity.get_player_name(e.target)), stored_shot.hitbox, e.reason, stored_shot.damage, stored_shot.lagcomp, stored_shot.backtrack),
+                text = string.format(" Missed %s's %s due to %s [dmg: %s, bt: %s, lc: %s] ", string.lower(entity.get_player_name(e.target)), stored_shot.hitbox, e.reason, stored_shot.damage, stored_shot.lagcomp, stored_shot.backtrack),
                 timer = globals.realtime(),
             
                 smooth_y = render.notifications.c_var.screen[2] + 100,
@@ -932,7 +1053,7 @@ local function normalize_yaw(yaw)
         end
 
         local function brute_impact(e)
-            if not ui.get(menu.antibrute_switch) and not ui.get(menu.notifications) then return end
+            if (not ui.get(menu.antibrute_switch) and not contains(menu.indicatorsx, "Notify")) and not contains(menu.notifys, "Switches")  then return end
             local me = entity.get_local_player()
 
             if not entity.is_alive(me) then return end
@@ -946,15 +1067,19 @@ local function normalize_yaw(yaw)
 
             local ox, oy, oz = entity.get_prop(me, "m_vecOrigin")
             local ex, ey, ez = entity.get_prop(shooter, "m_vecOrigin")
+            local r,g,b,a = ui.get(menu.main_clr)
             local target = entity.get_player_name(client.current_threat())
 
             local dist = ((e.y - ey)*lx - (e.x - ex)*ly + e.x*ey - e.y*ex) / math.sqrt((e.y-ey)^2 + (e.x - ex)^2)
 
             if math.abs(dist) <= 80 and globals.curtime() - brute.last_miss > 0.015 then
                 
-                if ui.get(menu.contains) == "Default" then
+                if ui.get(menu.contains) == "Default" and contains(menu.notifys, "Switches") then
+                    if ui.get(menu.consolelogs) then
+                        printc("\a"..RGBtoHEX(r,g,b).."ragnar0k ~ \affffff".."Switched side due to shot [target: "..target.."]")
+                    end
                     table.insert(render.notifications.table_text, {
-                        text = "\affffff7aSwitched side due to shot [target: "..target.."]",
+                        text = "Switched side due to shot [target: "..target.."]",
                         timer = globals.realtime(),
                     
                         smooth_y = render.notifications.c_var.screen[2] + 100,
@@ -970,11 +1095,14 @@ local function normalize_yaw(yaw)
                         box_right_1 = 0
                     }) 
                     
-                elseif ui.get(menu.contains) == "Random" then
+                elseif ui.get(menu.contains) == "Random" and contains(menu.notifys, "Switches") and contains(menu.indicatorsx, "Notify") then
                     brute.jitter = math.random(60, 75)
                     ui.set(ref.jitter[2], brute.jitter)
+                    if ui.get(menu.consolelogs) then
+                        printc("\a"..RGBtoHEX(r,g,b).."ragnar0k ~ \affffff".."Generated random jitter [target: "..target.." | jitter: "..brute.jitter.."]")
+                    end
                     table.insert(render.notifications.table_text, {
-                        text = "\affffff7aGenerated random jitter [target: "..target.." | jitter: "..brute.jitter.."]",
+                        text = "Generated random jitter [target: "..target.." | jitter: "..brute.jitter.."]",
                         timer = globals.realtime(),
                     
                         smooth_y = render.notifications.c_var.screen[2] + 100,
@@ -991,9 +1119,14 @@ local function normalize_yaw(yaw)
                     }) 
 
                 else
+                    if contains(menu.notifys, "Switches") and contains(menu.indicatorsx, "Notify") and contains(menu.indicatorsx, "Notify") then
                     brute.phase = brute.phase + 1
+                    local r,g,b,a = ui.get(menu.main_clr)
+                    if ui.get(menu.consolelogs) then
+                        printc("\a"..RGBtoHEX(r,g,b).."ragnar0k ~ \affffff".."Switched side due to shot [target: "..target.." | phase "..brute.phase.."]")
+                    end
                     table.insert(render.notifications.table_text, {
-                        text = "\affffff7aSwitched side due to shot [target: "..target.." | phase "..brute.phase.."]",
+                        text = "Switched side due to shot [target: "..target.." | phase "..brute.phase.."]",
                         timer = globals.realtime(),
                     
                         smooth_y = render.notifications.c_var.screen[2] + 100,
@@ -1008,6 +1141,7 @@ local function normalize_yaw(yaw)
                         box_left_1 = 0,
                         box_right_1 = 0
                     }) 
+                end
                 end
                 brute.last_miss = globals.curtime()
                 if brute.misses[shooter] == nil then
@@ -1029,9 +1163,13 @@ local function normalize_yaw(yaw)
         brute.misses_ind = { }
         brute.misses = { }
         brute.phase = 0
-        if ui.get(menu.antibrute_switch) then
+        if ui.get(menu.antibrute_switch)  and contains(menu.notifys, "Switches") and contains(menu.indicatorsx, "Notify")  then
+            local r,g,b,a = ui.get(menu.main_clr)
+            if ui.get(menu.consolelogs) then
+                printc("\a"..RGBtoHEX(r,g,b).."ragnar0k ~ \affffff".."Anti-bruteforce data has been reset")
+            end
             table.insert(render.notifications.table_text, {
-                text = "\affffff7aAnti-bruteforce data has been reset",
+                text = "Anti-bruteforce data has been reset",
                 timer = globals.realtime(),
             
                 smooth_y = render.notifications.c_var.screen[2] + 100,
@@ -1096,8 +1234,12 @@ local function normalize_yaw(yaw)
 
 
 
+    local r,g,b,a = ui.get(menu.main_clr)
+    if ui.get(menu.consolelogs) then
+        printc("\a"..RGBtoHEX(r,g,b).."ragnar0k ~ \affffff".."Imported anti-bruteforce phases")
+    end
     table.insert(render.notifications.table_text, {
-        text = " \affffff7aImported anti-bruteforce phases",
+        text = " Imported anti-bruteforce phases",
         timer = globals.realtime(),
     
         smooth_y = render.notifications.c_var.screen[2] + 100,
@@ -1134,10 +1276,12 @@ for key, value in pairs(antibrute) do
     end
 end
 
-
+if ui.get(menu.consolelogs) then
+    printc("\a"..RGBtoHEX(r,g,b).."ragnar0k ~ \affffff".."Exported anti-bruteforce phases to clipboard")
+end
 clipboard_export(requirements.base64.encode(json.stringify(settings), base64))
 table.insert(render.notifications.table_text, {
-    text = " \affffff7aExported anti-bruteforce phases to clipboard",
+    text = " Exported anti-bruteforce phases to clipboard",
     timer = globals.realtime(),
 
     smooth_y = render.notifications.c_var.screen[2] + 100,
@@ -1158,7 +1302,7 @@ end
 
 function createlog(text)
     table.insert(render.notifications.table_text, {
-        text = "\affffff7a"..text,
+        text = ""..text,
         timer = globals.realtime(),
     
         smooth_y = render.notifications.c_var.screen[2] + 100,
@@ -1175,7 +1319,7 @@ function createlog(text)
     }) 
 end
 
-createlog(" Welcome to ragnar0k.cc | \aE1DEFD99LIVE")
+createlog(" Welcome to ragnar0k.cc | \aE1DEFD99live")
 
 import_antibrute = ui.new_button("AA", "Anti-aimbot angles", "Import phases", import_antibrute)
 export_antibrute = ui.new_button("AA", "Anti-aimbot angles", "Export phases", export_antibrute)
@@ -1240,6 +1384,14 @@ local brutenumtotext = {
     [5] = "Phase 5",
 }
 anti_aim = {}
+current_stage3 = 0
+function stateupddd()
+    if globals.tickcount() % 4 < 2 and globals.chokedcommands() > 0  then
+        current_stage3 = current_stage3 + 1
+    end
+end
+
+client.set_event_callback("setup_command", stateupddd)
 
 for i = 1, 8 do
 anti_aim[i] = {
@@ -1794,6 +1946,21 @@ end
                             ui.set(ref.byaw[1], "Jitter")
                                 ui.set(ref.jitter[1], "Skitter")
                             ui.set(ref.jitter[2], aa_tbl.jitter)
+                    elseif ui.get(menu.presets) == "\aE1DEFD99PRESET: \aFFFFFFFFTalentdinalabun" and brute.last_miss + 3 < globals.curtime() and misc.knife_isactive == false then
+                        if globals.tickcount() % 20 == 1 then
+                            aa_tbl = {
+                                jitter = math.random(35, 60),
+                                fakeyaw = math.random(35, 60),
+                                yaw = math.random(-20,20),
+                                bodyyaw = 0,
+                            }
+                        end
+                            ui.set(ref.yaw[1], "180")
+                                ui.set(ref.yaw[2], aa_tbl.yaw)
+                                    ui.set(ref.byaw[2], aa_tbl.bodyyaw)
+                            ui.set(ref.byaw[1], "Jitter")
+                                ui.set(ref.jitter[1], "Center")
+                            ui.set(ref.jitter[2], aa_tbl.jitter)
                     end
                     local defensive_active = is_defensive_active()
                     if ui.get(menu.checkbox)  then
@@ -1807,27 +1974,12 @@ end
                     
                     
 
-                    ui.set(menu.ui_forward, 'On hotkey')
-                    ui.set(menu.ui_left, 'On hotkey')
-                    ui.set(menu.ui_right, 'On hotkey')
                     if (ui.get(menu.fs_toggle)) then
                         yaw_direction = 0
                         last_press_t_dir = 0
                         Mode = "Off"
                     else
-                        if ui.get(menu.ui_forward) and last_press_t_dir + 0.2 < globals.curtime() then
-                            Mode = "Forward"
-                            yaw_direction = yaw_direction == 180 and 0 or 180
-                            last_press_t_dir = globals.curtime()
-                        elseif ui.get(menu.ui_right) and last_press_t_dir + 0.2 < globals.curtime() then
-                            Mode = "Right"
-                            yaw_direction = yaw_direction == 90 and 0 or 90
-                            last_press_t_dir = globals.curtime()
-                        elseif ui.get(menu.ui_left) and last_press_t_dir + 0.2 < globals.curtime() then
-                            Mode = "Left"
-                            yaw_direction = yaw_direction == -90 and 0 or -90
-                            last_press_t_dir = globals.curtime()
-                        elseif last_press_t_dir > globals.curtime() then
+                        if last_press_t_dir > globals.curtime() then
                             Mode = "Off"
                             last_press_t_dir = globals.curtime()
                             yaw_direction = 0
@@ -1884,13 +2036,28 @@ end
                                 ui.set(ref.pitch[1], "Down")
                             end
                             if ui.get(menu.breaker_switch) then
+                                local dtyaw = animations.anim_new('sdxasdsxs', ref.dt[1] and 99 or 25)
+                                local dtyaw2 = animations.anim_new('sdxasdsxsx', ref.dt[1] and -180 or 99)
                                 if is_defensive_active() and not is_onground then
+                                    bigyaw = 0
+                                    if cmd.chokedcommands == 0 then
+                                        bigyaw = math.random(dtyaw,dtyaw2)
+                                    elseif cmd.chokedcommands == 1 then
+                                        bigyaw = math.random(-180,180)
+                                    end
                                     breaker_active = true
-                                    ui.set(ref.pitch[1], "Up")
-                                    ui.set(ref.jitter[2], 10)
+                                    value = math.random(1, 3)
+                                    redo = "Off"
+                                    if value == 1 then 
+                                        redo = "Off"
+                                    elseif value == 2 then
+                                        redo = "Up"
+                                    elseif value == 3 then
+                                        redo = "Down"
+                                    end
+                                    ui.set(ref.pitch[1], redo)
                                     ui.set(ref.yaw[1], "180")
-                                    ui.set(ref.yaw[2], yaw_direction == 0 and (math.random(-180, 180)) or yaw_direction)
-                                    ui.set(ref.byaw[2], 0)
+                                    ui.set(ref.yaw[2], yaw_direction == 0 and bigyaw or yaw_direction)
 
                                 else
                                     breaker_active = false
@@ -2029,12 +2196,6 @@ end
                             bodyyaw > 1 and ma2 or 160)
                         end
                     end
-                    local function state_panel()
-                        local center = {client.screen_size()/2}
-                        local lp = entity.get_local_player()
-                        if not entity.is_alive(lp) then return end
-            renderer.gradient(center[1], 100, 200, 50, 255, 0, 0, 255, 0, 0, 255, 255, true)
-                    end
 
 
                     local function color(desync)
@@ -2104,19 +2265,23 @@ end
                     SetTableVisibility({menu.discords, menu.hometext, menu.hometext2}, false)
                     end
                     if ui.get(menu.retard) == "Visuals" then
-                    SetTableVisibility({menu.indicators, menu.notifications, menu.main_clr, menu.arrows, menu.main_clr4, menu.indclrtext, menu.state_panel, menu.state_panel_color, menu.wmtype}, true)
+                    SetTableVisibility({menu.main_clr, menu.indclrtext, menu.indicatorsx}, true)
+                    ui.set_visible(menu.notifys, (true and contains(menu.indicatorsx, "Notify")))
+                    ui.set_visible(menu.notifys2, (true and contains(menu.indicatorsx, "Notify")))
+                    ui.set_visible(menu.consolelogs, (true and contains(menu.indicatorsx, "Notify")))
+                    SetTableVisibility({menu.arrows, menu.main_clr4}, false)
                     else
-                    SetTableVisibility({menu.indicators, menu.notifications, menu.main_clr, menu.arrows, menu.main_clr4, menu.indclrtext, menu.state_panel, menu.state_panel_color, menu.wmtype}, false)
+                    SetTableVisibility({menu.main_clr, menu.arrows, menu.main_clr4, menu.indclrtext, menu.indicatorsx, menu.notifys, menu.notifys2, menu.consolelogs}, false)
                     end
                     if ui.get(menu.retard) == "Anti-Aim" then
                 
                     SetTableVisibility({menu.subtab_antiaim, menu.presets}, true)
                     SetTableVisibility({menu.conditiontab, export_btn, import_btn}, ui.get(menu.subtab_antiaim) ~= "Keybinds" and ui.get(menu.presets) == "Builder")
-                    SetTableVisibility({menu.ui_left, menu.ui_right, menu.ui_forward, menu.fs_toggle, menu.checkbox}, ui.get(menu.subtab_antiaim) == "Keybinds")
+                    SetTableVisibility({ menu.fs_toggle, menu.checkbox}, ui.get(menu.subtab_antiaim) == "Keybinds")
                     SetTableVisibility({menu.checkbox, menu.breaker_switch, menu.knife_hotkey}, ui.get(menu.subtab_antiaim) == "Addons")
                     SetTableVisibility({menu.knife_distance}, ui.get(menu.knife_hotkey) and ui.get(menu.subtab_antiaim) == "Addons")
                     else
-                    SetTableVisibility({menu.subtab_antiaim, menu.presets, menu.conditiontab, export_btn, import_btn, menu.ui_left, menu.ui_right, menu.ui_forward, menu.fs_toggle, menu.checkbox, menu.breaker_switch, menu.knife_hotkey, menu.knife_distance}, false)
+                    SetTableVisibility({menu.subtab_antiaim, menu.presets, menu.conditiontab, export_btn, import_btn, menu.fs_toggle, menu.checkbox, menu.breaker_switch, menu.knife_hotkey, menu.knife_distance}, false)
                     end
                     if ui.get(menu.retard) == "Misc" then
                     SetTableVisibility({menu.lagcomp, menu.animfucker, menu.ctagenable}, true)
@@ -2192,7 +2357,7 @@ end
                         end
                     end
 
-                    if ui.get(menu.retard) == "Anti-Aim" and ui.get(menu.subtab_antiaim) == "Anti-Aim" and (ui.get(menu.presets) == "\aE1DEFD99PRESET: \aFFFFFFFFDynamic" or ui.get(menu.presets) == "\aE1DEFD99PRESET: \aFFFFFFFFRidiculous") then
+                    if ui.get(menu.retard) == "Anti-Aim" and ui.get(menu.subtab_antiaim) == "Anti-Aim" and (ui.get(menu.presets) == "\aE1DEFD99PRESET: \aFFFFFFFFDynamic" or ui.get(menu.presets) == "\aE1DEFD99PRESET: \aFFFFFFFFRidiculous" or ui.get(menu.presets) == "\aE1DEFD99PRESET: \aFFFFFFFFTalentdinalabun") then
                         ui.set_visible(menu.cannotview, true)
                     else
                         ui.set_visible(menu.cannotview, false)
@@ -2345,7 +2510,7 @@ end
                     local hsax = animations.anim_new('a2', (ui.get(ref.os[2])) and 255 or 0)
                     local dtax = animations.anim_new('a', (ui.get(ref.dt[2])) and 255 or 0)
                     local deez2 = animations.anim_new('asdasdddxxxd', (ui.get(ref.dt[2]) or ui.get(ref.os[2])) and -11 or 0)
-                    local alpha = animations.anim_new('asdasdddd', ui.get(menu.indicators) and 1 or 0)
+                    local alpha = animations.anim_new('asdasdddd', contains(menu.indicatorsx, "Crosshair")   and 1 or 0)
                     ca = 255
                     ca = dt_r
                     ca2 = dt_g
@@ -2465,7 +2630,7 @@ end
 
 
                     table.insert(render.notifications.table_text, {
-                        text = ' \affffff7aImported anti-aim config',
+                        text = ' Imported anti-aim config',
                         timer = globals.realtime(),
                     
                         smooth_y = render.notifications.c_var.screen[2] + 100,
@@ -2501,11 +2666,11 @@ end
                         end
                     end
                 end
-
+                local r,g,b,a = ui.get(menu.main_clr)
 
                 clipboard_export(requirements.base64.encode(json.stringify(settings), base64))
                 table.insert(render.notifications.table_text, {
-                    text = ' \affffff7aExported anti-aim config to clipboard',
+                    text = ' Exported anti-aim config to clipboard',
                     timer = globals.realtime(),
                 
                     smooth_y = render.notifications.c_var.screen[2] + 100,
