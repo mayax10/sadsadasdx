@@ -322,7 +322,7 @@ local menu = {
     subtab_antiaimspacer2 = ui.new_label("AA", "Anti-aimbot angles", "    "),
     subtab_antiaim = ui.new_combobox("AA", "Anti-aimbot angles", "» Section", "Anti-Aim", "Anti-bruteforce", "Addons"),
     subtab_antiaimspacer = ui.new_label("AA", "Anti-aimbot angles", "    "),
-    presets = ui.new_combobox("AA", "Anti-aimbot angles", "» Anti-aim settings", "None", "\aeb613499PRESET: \aFFFFFFFFDynamic", "\aeb613499PRESET: \aFFFFFFFFRidiculous", "\aeb613499PRESET: \aFFFFFFFFTalentdinalabun", "Builder"),
+    presets = ui.new_combobox("AA", "Anti-aimbot angles", "» Anti-aim settings", "None", "\aeb613499PRESET: \aFFFFFFFFDynamic", "\aeb613499PRESET: \aFFFFFFFFRidiculous", "\aeb613499PRESET: \aFFFFFFFFTalentdinalabun", "\a428df5FFPUBLIC: \aFFFFFFFFcaisa", "Builder"),
     cannotview = ui.new_label("AA", "Anti-aimbot angles", "\aeb613499[!] You cannot view settings while using a preset."),
     conditiontab = ui.new_combobox("AA", "Anti-aimbot angles",  "» Player state", "Global", "Standing", "Moving", "Air", "Air+crouch", "Crouch", "Slowwalk", "Fakelag"),
     conditiontabspacer = ui.new_label("AA", "Anti-aimbot angles", "    "),
@@ -2253,6 +2253,21 @@ end
                             ui.set(ref.byaw[1], "Jitter")
                                 ui.set(ref.jitter[1], "Center")
                             ui.set(ref.jitter[2], aa_tbl.jitter)
+                        elseif ui.get(menu.presets) == "\a428df5FFPUBLIC: \aFFFFFFFFcaisa" and brute.last_miss + 3 < globals.curtime() and misc.knife_isactive == false then
+                            if globals.tickcount() % 20 == 1 then
+                                aa_tbl = {
+                                    jitter = -21,
+                                    fakeyaw = math.random(35, 60),
+                                    yaw = math.random(-20,20),
+                                    bodyyaw = 0,
+                                }
+                            end
+                                ui.set(ref.yaw[1], "180")
+                                    ui.set(ref.yaw[2], aa_tbl.yaw)
+                                        ui.set(ref.byaw[2], aa_tbl.bodyyaw)
+                                ui.set(ref.byaw[1], "Off")
+                                    ui.set(ref.jitter[1], "Center")
+                                ui.set(ref.jitter[2], aa_tbl.jitter)
                     end
                     local defensive_active = is_defensive_active()
                     if ui.get(menu.checkbox)  then
