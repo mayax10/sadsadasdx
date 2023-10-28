@@ -309,35 +309,47 @@ local ref = {
 user = "tesla"
 build = "debug"
 ui.new_label("AA", "Anti-aimbot angles", "» ragnar0k.cc ~\aeb613499 "..build)
-ui.new_label("AA", "Anti-aimbot angles", "\aeb613499[!] You've loaded our lua "..data.load_count.." times")
+ui.new_label("AA", "Anti-aimbot angles", "    ")
+ui.new_label("AA", "Anti-aimbot angles", "\aeb613499♦ \abcbcbdFF You've loaded our lua \aeb613499"..data.load_count.."\abcbcbdFF times")
 ui.new_label("AA", "Anti-aimbot angles", " ")
 local menu = {
-    retard = ui.new_combobox("AA", "Anti-aimbot angles", "» Tab selection", "Home","Anti-Aim", "Visuals", "Misc"),
+    retard = ui.new_combobox("AA", "Anti-aimbot angles", "» Tab selection", "Home","Anti-Aim", "Visuals"),
     hometext2 = ui.new_label("aa", "anti-aimbot angles"," "),
     hometext = ui.new_label("aa", "anti-aimbot angles","ragnar0k.cc ~ \aeb613499join our discord below"), --\aeb613499
     discords = ui.new_button("aa", "anti-aimbot angles", "DISCORD" , function()
         panorama.loadstring("SteamOverlayAPI.OpenExternalBrowserURL('https://discord.gg/BkCcRjzCqR');")()
     end),
-    subtab_antiaim = ui.new_combobox("AA", "Anti-aimbot angles", "» Section", "Anti-Aim", "Keybinds", "Anti-bruteforce", "Addons"),
+    subtab_antiaimspacer2 = ui.new_label("AA", "Anti-aimbot angles", "    "),
+    subtab_antiaim = ui.new_combobox("AA", "Anti-aimbot angles", "» Section", "Anti-Aim", "Anti-bruteforce", "Addons"),
+    subtab_antiaimspacer = ui.new_label("AA", "Anti-aimbot angles", "    "),
     presets = ui.new_combobox("AA", "Anti-aimbot angles", "» Anti-aim settings", "None", "\aeb613499PRESET: \aFFFFFFFFDynamic", "\aeb613499PRESET: \aFFFFFFFFRidiculous", "\aeb613499PRESET: \aFFFFFFFFTalentdinalabun", "Builder"),
     cannotview = ui.new_label("AA", "Anti-aimbot angles", "\aeb613499[!] You cannot view settings while using a preset."),
     conditiontab = ui.new_combobox("AA", "Anti-aimbot angles",  "» Player state", "Global", "Standing", "Moving", "Air", "Air+crouch", "Crouch", "Slowwalk", "Fakelag"),
+    conditiontabspacer = ui.new_label("AA", "Anti-aimbot angles", "    "),
     
     indclrtext = ui.new_label("AA", "Anti-aimbot angles", "» \aeb613499Indicators color"),
     main_clr = ui.new_color_picker("AA", "Anti-aimbot angles", "» \aeb613499Indicators color", 150, 200, 60, 255),
-    indicatorsx = ui.new_multiselect('AA', 'Anti-aimbot angles', '• Select Indicators', "Watermark", "Crosshair", "Notify", "DTM", "Info"),
-    dmgind = ui.new_checkbox("AA", "Anti-aimbot angles", "\aeb613499»\aFFFFFFFF Damage indicator"),
+    spacer1 = ui.new_label("AA", "Anti-aimbot angles", "    "),
+    indicatorsx = ui.new_multiselect('AA', 'Anti-aimbot angles', '⭐', "Watermark", "Crosshair", "Notify", "DTM", "Info", "Local"),
+    spacer2 = ui.new_label("AA", "Anti-aimbot angles", "    "),
+    dmgind = ui.new_checkbox("AA", "Anti-aimbot angles", "\aeb613499♫\aFFFFFFFF Damage indicator"),
     dmgindcol = ui.new_color_picker("AA", "Anti-aimbot angles", "\aeb613499»\aFFFFFFFF Damage indicator Color", 101, 219, 75, 255),
+    spacer3 = ui.new_label("AA", "Anti-aimbot angles", "    "),
     infopos = ui.new_combobox('AA', 'Anti-aimbot angles', '\aeb613499»\aFFFFFFFF Info Position', "1", "2"),
-    notifys = ui.new_multiselect('AA', 'Anti-aimbot angles', '\aeb613499»\aFFFFFFFF Select Notifications', "Hit", "Misses", "Switches"),
-    notifys2 = ui.new_combobox('AA', 'Anti-aimbot angles', '\aeb613499»\aFFFFFFFF Notifications Color', "1", "2"),
+    spacer4 = ui.new_label("AA", "Anti-aimbot angles", "    "),
+    notifys = ui.new_multiselect('AA', 'Anti-aimbot angles', '\aeb613499✉\aFFFFFFFF Select Notifications', "Hit", "Misses", "Switches"),
+    spacer5 = ui.new_label("AA", "Anti-aimbot angles", "    "),
+    notifys2 = ui.new_combobox('AA', 'Anti-aimbot angles', '\aeb613499✉\aFFFFFFFF Notifications Color', "1", "2"),
+    spacer6 = ui.new_label("AA", "Anti-aimbot angles", "    "),
     consolelogs = ui.new_checkbox("AA", "Anti-aimbot angles", "\aeb613499»\aFFFFFFFF Console logs"),
-    fs_toggle = ui.new_hotkey("AA", "Anti-aimbot angles", "\aeb613499»\aFFFFFFFF Freestanding"),
-    lagcomp = ui.new_checkbox("AA", "Anti-aimbot angles", "\aeb613499»\aFFFFFFFF Low FL on on-shot"),
+    spacer7 = ui.new_label("AA", "Anti-aimbot angles", "    "),
+    fs_toggle = ui.new_hotkey("AA", "Anti-aimbot angles", "• Freestanding"),
+    lagcomp = ui.new_checkbox("AA", "Anti-aimbot angles", "• Low FL on on-shot"),
     main_clr4 = ui.new_color_picker("AA", "Anti-aimbot angles", "\aeb613499»\aFFFFFFFF Manual AA Arrows", 145, 145, 255, 255),
     arrows = ui.new_checkbox("AA", "Anti-aimbot angles", "\aeb613499»\aFFFFFFFF Manual AA Arrows"),
     breaker_switch = ui.new_checkbox("AA", "Anti-aimbot angles", "• Defensive Y/P"),
-    ctagenable = ui.new_checkbox("AA", "Anti-aimbot angles", "• Clantag"),
+    ctagenable = ui.new_checkbox("AA", "Anti-aimbot angles", "\aeb613499»\aFFFFFFFF Clantag"),
+    spacer8 = ui.new_label("AA", "Anti-aimbot angles", "    "),
     checkbox = ui.new_checkbox("AA", "Anti-aimbot angles", "• Defensive up-jump"),
     antibrute_switch = ui_new_checkbox("AA", "Anti-aimbot angles", "Enable Anti-bruteforce"),
     contains = ui.new_combobox("AA", "Anti-aimbot angles", "-+ Presets", "Default", "Random", "RDS Exploit", "Custom"),
@@ -355,12 +367,25 @@ local menu = {
     knife_distance = ui.new_slider("AA", "Anti-aimbot angles", "• Avoid backstab radius",0,300,150,true,"u"),
 }
 
+function xxx()
+    local vs = ui.get(menu.retard) == "Visuals"
+    ui.set_visible(menu.spacer1, vs)
+    ui.set_visible(menu.spacer2, vs)
+    ui.set_visible(menu.spacer3, vs)
+    ui.set_visible(menu.spacer4, vs)
+    ui.set_visible(menu.spacer5, vs)
+    ui.set_visible(menu.spacer6, vs)
+    ui.set_visible(menu.spacer7, vs)
+    ui.set_visible(menu.spacer8, vs)
+end
+
 function ctag_en()
     if ui.get(menu.ctagenable) then
         client.set_clan_tag("ragnar0k.cc")
     end
 end
 
+client.set_event_callback("paint", xxx)
 client.set_event_callback("paint", ctag_en)
 
 -- glowmudle
@@ -1208,7 +1233,7 @@ local function normalize_yaw(yaw)
             local dflt = "\affffffff"
             if ui.get(menu.notifys2) == "1" then
                 table.insert(render.notifications.table_text, {
-                    text = string.format(" Hit %s for \a4fff7eff%s\affffff7a in the \a4fff7eff%s\affffff7a [hc: %s, bt: %s, lc: %s] ", string.lower(entity.get_player_name(e.target)), e.damage, hitgroup_names[e.hitgroup + 1] or '?', math.floor(e.hit_chance).."%", stored_shot.backtrack, stored_shot.lagcomp),
+                    text = string.format(" Hit %s for \a23c720ff%s\affffff7a in the \a23c720ff%s\affffff7a [hc: %s, bt: %s, lc: %s] ", string.lower(entity.get_player_name(e.target)), e.damage, hitgroup_names[e.hitgroup + 1] or '?', math.floor(e.hit_chance).."%", stored_shot.backtrack, stored_shot.lagcomp),
                     timer = globals.realtime(),
                 
                     smooth_y = render.notifications.c_var.screen[2] + 100,
@@ -1223,9 +1248,9 @@ local function normalize_yaw(yaw)
                     box_left_1 = 0,
                     box_right_1 = 0,
 
-                    red = 79,
-                    green = 255,
-                    blue = 126
+                    red = 35,
+                    green = 199,
+                    blue = 32
                 }) 
             else
                 table.insert(render.notifications.table_text, {
@@ -1590,9 +1615,6 @@ function createlog(text)
 end
 
 createlog(" Welcome to ragnar0k.cc | \aeb613499DEBUG")
-
-import_antibrute = ui.new_button("AA", "Anti-aimbot angles", "Import phases", import_antibrute)
-export_antibrute = ui.new_button("AA", "Anti-aimbot angles", "Export phases", export_antibrute)
 local var = {
 p_state = 1,
 }
@@ -1664,54 +1686,54 @@ end
 client.set_event_callback("setup_command", stateupddd)
 
 for i = 1, 8 do
-anti_aim[i] = {
-    override = ui.new_checkbox("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF Override state"),
-    yaw_mode = ui.new_combobox("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF yaw mode", "Default", "sway", "Superior", "3 Way", "5 Way", "Yaw Manipulation"),
-    yaw_manipulation_add_left = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF manipulation ensure left", -90, 90, 0),
-    yaw_manipulation_add_right = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF manipulation ensure right", -90, 90, 0),
-    yaw_default = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF• yaw value", -90, 90, 0),
-    yaw_superior = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF superior yaw ensure", -90, 90, 0),
-    yaw_left = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF yaw ensure left", -90, 90, 0),
-    yaw_right = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF yaw ensure right", -90, 90, 0),
-    fiveway_yaw_add = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF 3-way yaw value", -90, 90, 0),
-    threeway_yaw_add = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF 5-way yaw value", -90, 90, 0),
-    jitter = ui.new_combobox("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF jitter", "Off", "Offset", "Center", "Random", "Skitter"),
-    jitter_mode = ui.new_combobox("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF jitter mode", "normal", "sway"),
-    left_jitter_val = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF left jitter value", -90, 90, 0),
-    right_jitter_val = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF right jitter value", -90, 90, 0),
-    jitter_val = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF jitter value", -90, 90, 0),
-    body_yaw = ui.new_combobox("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF body yaw", "Off", "Opposite", "Jitter", "Static"),
-    body_yaw_mode = ui.new_combobox("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF body yaw mode", "normal", "sway"),
-    body_yaw_val = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF body yaw value", -180, 180, 0),
-    left_byaw_val = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF left body yaw value", -90, 90, 0),
-    right_byaw_val = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF right body yaw value", -90, 90, 0),
-    lolway_yaw_add = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF meta jitter value", -90, 90, 0),
-    threeway_jitter_val = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF 5-way jitter value", -90, 90, 0),
-}
-end
+    anti_aim[i] = {
+        override = ui.new_checkbox("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF Override state"),
+        yaw_mode = ui.new_combobox("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF yaw mode", "Default", "sway", "Superior", "3 Way", "5 Way", "Yaw Manipulation"),
+        yaw_manipulation_add_left = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF manipulation ensure left", -90, 90, 0),
+        yaw_manipulation_add_right = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF manipulation ensure right", -90, 90, 0),
+        yaw_default = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF yaw value", -90, 90, 0),
+        yaw_superior = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF superior yaw ensure", -90, 90, 0),
+        yaw_left = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF yaw ensure left", -90, 90, 0),
+        yaw_right = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF yaw ensure right", -90, 90, 0),
+        fiveway_yaw_add = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF 3-way yaw value", -90, 90, 0),
+        threeway_yaw_add = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF 5-way yaw value", -90, 90, 0),
+        jitter = ui.new_combobox("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF jitter", "Off", "Offset", "Center", "Random", "Skitter"),
+        jitter_mode = ui.new_combobox("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF jitter mode", "normal", "sway"),
+        left_jitter_val = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF left jitter value", -90, 90, 0),
+        right_jitter_val = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF right jitter value", -90, 90, 0),
+        jitter_val = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF jitter value", -90, 90, 0),
+        body_yaw = ui.new_combobox("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF body yaw", "Off", "Opposite", "Jitter", "Static"),
+        body_yaw_mode = ui.new_combobox("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF body yaw mode", "normal", "sway"),
+        body_yaw_val = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF body yaw value", -180, 180, 0),
+        left_byaw_val = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF left body yaw value", -90, 90, 0),
+        right_byaw_val = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF right body yaw value", -90, 90, 0),
+        lolway_yaw_add = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF meta jitter value", -90, 90, 0),
+        threeway_jitter_val = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF 5-way jitter value", -90, 90, 0),
+    }
+    end
 
 antibrute = {}
 for i = 1, 5 do
 antibrute[i] = {
-    yaw_mode = ui.new_combobox("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF yaw mode", "Default", "sway", "Superior", "3 Way", "5 Way"),
-    yaw_default = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF yaw add", -90, 90, 0),
-    yaw_superior = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF superior yaw add", -90, 90, 0),
-    yaw_left = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF yaw add left", -90, 90, 0),
-    yaw_right = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF yaw add right", -90, 90, 0),
-    fiveway_yaw_add = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF 3-way yaw add", -90, 90, 0),
-    threeway_yaw_add = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF 5-way yaw add", -90, 90, 0),
-    jitter = ui.new_combobox("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF jitter", "Off", "Offset", "Center", "Random", "Skitter"),
-    jitter_mode = ui.new_combobox("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF jitter mode", "normal", "sway"),
-    left_jitter_val = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF left jitter value", -90, 90, 0),
-    right_jitter_val = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF right jitter value", -90, 90, 0),
-    jitter_val = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF jitter value", -90, 90, 0),
-    body_yaw = ui.new_combobox("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF body yaw", "Off", "Opposite", "Jitter", "Static"),
-    body_yaw_mode = ui.new_combobox("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF body yaw mode", "normal", "sway"),
-    body_yaw_val = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF body yaw value", -180, 180, 0),
-    left_byaw_val = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF left body yaw value", -90, 90, 0),
-    right_byaw_val = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF right body yaw value", -90, 90, 0),
-    lolway_yaw_add = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF meta jitter value", -90, 90, 0),
-    threeway_jitter_val = ui.new_slider("AA", "Anti-aimbot angles", "\aeb613499•\aFFFFFFFF 5-way jitter value", -90, 90, 0),
+    yaw_mode = ui.new_combobox("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF yaw mode", "Default", "sway", "Superior", "3 Way", "5 Way"),
+    yaw_default = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF yaw add", -90, 90, 0),
+    yaw_superior = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF superior yaw add", -90, 90, 0),
+    yaw_left = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF yaw add left", -90, 90, 0),
+    yaw_right = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF yaw add right", -90, 90, 0),
+    fiveway_yaw_add = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF 3-way yaw add", -90, 90, 0),
+    threeway_yaw_add = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF 5-way yaw add", -90, 90, 0),
+    jitter = ui.new_combobox("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF jitter", "Off", "Offset", "Center", "Random", "Skitter"),
+    jitter_mode = ui.new_combobox("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF jitter mode", "normal", "sway"),
+    left_jitter_val = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF left jitter value", -90, 90, 0),
+    right_jitter_val = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF right jitter value", -90, 90, 0),
+    jitter_val = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF jitter value", -90, 90, 0),
+    body_yaw = ui.new_combobox("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF body yaw", "Off", "Opposite", "Jitter", "Static"),
+    body_yaw_mode = ui.new_combobox("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF body yaw mode", "normal", "sway"),
+    body_yaw_val = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF body yaw value", -180, 180, 0),
+    left_byaw_val = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF left body yaw value", -90, 90, 0),
+    right_byaw_val = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF right body yaw value", -90, 90, 0),
+    lolway_yaw_add = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF meta jitter value", -90, 90, 0),
+    threeway_jitter_val = ui.new_slider("AA", "Anti-aimbot angles", "\aFFFFFFFF‹\a9784b3ff"..i.."\aFFFFFFFF›\abcbcbdFF 5-way jitter value", -90, 90, 0),
 }
 end
 
@@ -2311,9 +2333,10 @@ end
                                 if not is_onground then
                                     bigyaw = 0
                                     breaker_active = true
-                                    local value = math.abs(1 * math.cos(2 * math.pi * (globals.curtime() + 3) * 5)) * 3
-                                    local value2 = math.abs(1 * math.cos(2 * math.pi * (globals.curtime() + 3)/4)) * client.random_int(1, 2)
-                                    local bigyaw = math.abs(1 * math.cos(2 * math.pi * (globals.curtime() + 3)*6)) * 360
+                                    local valuexxx = math.abs(1 * math.cos(2 * math.pi * (globals.curtime() /2) )) * 5
+                                    local value = math.abs(1 * math.cos(2 * math.pi * (globals.curtime() + 3) )) * 3
+                                    local value2 = math.abs(1 * math.cos(2 * math.pi * (globals.curtime() + 3)/2)) * client.random_int(1, 2)
+                                    local bigyaw = math.abs(1 * math.cos(2 * math.pi * (globals.curtime() + 3)*2)) * client.random_int(75, 360)
                                     if value == 4 then
                                         value = 3 
                                     end
@@ -2322,7 +2345,7 @@ end
                                     if value == 1 then 
                                         redo = "Up"
                                     elseif value == 2 then
-                                        redo = "Off"
+                                        redo = "Up"
                                     elseif value == 3 then
                                         redo = "Minimal"
                                     end
@@ -2536,30 +2559,30 @@ end
                     SetTableVisibility({menu.discords, menu.hometext, menu.hometext2}, false)
                     end
                     if ui.get(menu.retard) == "Visuals" then
-                    SetTableVisibility({menu.main_clr, menu.indclrtext, menu.indicatorsx, menu.dmgind, menu.dmgindcol}, true)
+                    SetTableVisibility({menu.main_clr, menu.indclrtext, menu.indicatorsx, menu.dmgind, menu.dmgindcol, menu.ctagenable}, true)
                     ui.set_visible(menu.infopos, (true and contains(menu.indicatorsx, "Info")))
                     ui.set_visible(menu.notifys, (true and contains(menu.indicatorsx, "Notify")))
                     ui.set_visible(menu.notifys2, (true and contains(menu.indicatorsx, "Notify")))
                     ui.set_visible(menu.consolelogs, (true and contains(menu.indicatorsx, "Notify")))
+                    ui.set_visible(menu.animfucker, (true and contains(menu.indicatorsx, "Local")))
                     SetTableVisibility({menu.arrows, menu.main_clr4}, false)
                     else
-                    SetTableVisibility({menu.main_clr, menu.arrows, menu.main_clr4, menu.indclrtext, menu.indicatorsx, menu.notifys, menu.notifys2, menu.consolelogs, menu.infopos, menu.dmgind, menu.dmgindcol}, false)
+                    SetTableVisibility({menu.main_clr, menu.arrows, menu.main_clr4, menu.indclrtext, menu.indicatorsx, menu.notifys, menu.notifys2, menu.ctagenable, menu.consolelogs, menu.infopos, menu.dmgind, menu.dmgindcol, menu.animfucker}, false)
                     end
                     if ui.get(menu.retard) == "Anti-Aim" then
                 
                     SetTableVisibility({menu.subtab_antiaim, menu.presets}, true)
-                    SetTableVisibility({menu.conditiontab, export_btn, import_btn}, ui.get(menu.subtab_antiaim) ~= "Keybinds" and ui.get(menu.presets) == "Builder")
-                    SetTableVisibility({ menu.fs_toggle, menu.checkbox}, ui.get(menu.subtab_antiaim) == "Keybinds")
+                    SetTableVisibility({menu.subtab_antiaimspacer, menu.subtab_antiaimspacer2,menu.presets}, true)
+                    SetTableVisibility({menu.conditiontab, menu.conditiontabspacer, export_btn, import_btn}, ui.get(menu.subtab_antiaim) ~= "Keybinds" and ui.get(menu.presets) == "Builder")
+                    SetTableVisibility({ menu.fs_toggle, menu.checkbox, menu.lagcomp}, ui.get(menu.subtab_antiaim) == "Addons")
                     SetTableVisibility({menu.checkbox, menu.breaker_switch, menu.knife_hotkey}, ui.get(menu.subtab_antiaim) == "Addons")
                     SetTableVisibility({menu.knife_distance}, ui.get(menu.knife_hotkey) and ui.get(menu.subtab_antiaim) == "Addons")
                     else
-                    SetTableVisibility({menu.subtab_antiaim, menu.presets, menu.conditiontab, export_btn, import_btn, menu.fs_toggle, menu.checkbox, menu.breaker_switch, menu.knife_hotkey, menu.knife_distance}, false)
+                    SetTableVisibility({menu.subtab_antiaim, menu.presets, menu.conditiontab,menu.conditiontabspacer,menu.subtab_antiaimspacer2, export_btn, import_btn, menu.fs_toggle, menu.checkbox, menu.breaker_switch, menu.knife_hotkey, menu.knife_distance, menu.lagcomp}, false)
                     end
                     if ui.get(menu.retard) == "Misc" then
-                    SetTableVisibility({menu.lagcomp, menu.animfucker, menu.ctagenable}, true)
                     SetTableVisibility({menu.exploits.yaw_1st, menu.exploits.yaw_2nd, menu.exploits.pitch, menu.exploits.bodyyaw}, false)
                     else
-                    SetTableVisibility({menu.lagcomp, menu.animfucker, menu.ctagenable}, false)
                     SetTableVisibility({menu.exploits.yaw_1st, menu.exploits.yaw_2nd, menu.exploits.pitch, menu.exploits.bodyyaw}, false)
                     end
 
@@ -2570,7 +2593,7 @@ end
                     end
 
                     if ui.get(menu.retard) == "Anti-Aim" and ui.get(menu.subtab_antiaim) == "Addons"then
-                        SetTableVisibility({menu.conditiontab, menu.presets}, false)
+                        SetTableVisibility({menu.conditiontab, menu.presets, import_btn,export_btn}, false)
                     else
 
                     end
@@ -2603,6 +2626,7 @@ end
                         end
                         SetTableVisibility({import_antibrute, export_antibrute, menu.antibrute_switch}, true)
                         SetTableVisibility({menu.contains}, ui.get(menu.antibrute_switch))
+                        SetTableVisibility({import_btn,export_btn}, false)
                         SetTableVisibility({menu.bruteforce.phases}, ui.get(menu.antibrute_switch) and ui.get(menu.contains) == "Custom")
                     else
                         SetTableVisibility({menu.contains, import_antibrute, export_antibrute, menu.antibrute_switch, menu.bruteforce.phases}, false)
@@ -2961,6 +2985,8 @@ end
             end
             import_btn = ui.new_button("AA", "Anti-aimbot angles", "Import settings", import_cfg)
             export_btn = ui.new_button("AA", "Anti-aimbot angles", "Export settings", export_cfg)
+            import_antibrute = ui.new_button("AA", "Anti-aimbot angles", "Import phases", import_antibrute)
+            export_antibrute = ui.new_button("AA", "Anti-aimbot angles", "Export phases", export_antibrute)
 
 
             client.set_event_callback("paint_ui",noti)
